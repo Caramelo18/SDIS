@@ -7,8 +7,8 @@ import java.net.MulticastSocket;
 
 public class SocketListener implements Runnable
 {
-	public MulticastSocket socket;
-	public static final int MAX_SIZE = 65000;
+	private static final int MAX_SIZE = 65000;
+	private MulticastSocket socket;
 	
 	private InetAddress address;
 	private Integer port;
