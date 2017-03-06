@@ -1,11 +1,11 @@
-package Socket_Listeners;
+package socket_listener;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
-public abstract class SocketListener implements Runnable
+public class SocketListener implements Runnable
 {
 	public MulticastSocket socket;
 	public static final int MAX_SIZE = 65000;
@@ -62,5 +62,8 @@ public abstract class SocketListener implements Runnable
 		socket.close();
 	}
 	
-	public abstract void handlePacket(DatagramPacket packet);
+	public void handlePacket(DatagramPacket packet)
+	{
+		System.out.print("Handling the packet");
+	}
 }
