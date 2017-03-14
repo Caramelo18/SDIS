@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.nio.charset.StandardCharsets;
+
+import message.Message;
 
 public class SocketListener implements Runnable
 {
@@ -64,6 +67,8 @@ public class SocketListener implements Runnable
 	
 	public void handlePacket(DatagramPacket packet)
 	{
+		String response = new String(packet.getData(), 0, packet.getData().length, StandardCharsets.US_ASCII);
+		Message message = new Message(response);
 		System.out.print("Handling the packet");
 	}
 }
