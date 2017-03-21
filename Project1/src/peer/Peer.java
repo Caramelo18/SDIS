@@ -4,48 +4,63 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import files.FileManager;
-import socket_listener.SocketListener;
+import socket.ThreadedMulticastSocket;
 
 public class Peer
 {
-	private static Integer ID;
-	private static SocketListener MC;
-	private static SocketListener MDB;
-	private static SocketListener MDR;
+	// Peer Information
+	 private static String protocolVersion;
+	 private static int serverId;
+	 // service access point
 	
-	private static String file = "";
-	private static Integer replicationDeg = 0;
-
+	// Socket Listeners
+	private static ThreadedMulticastSocket MC;
+	private static ThreadedMulticastSocket MDB;
+	private static ThreadedMulticastSocket MDR;
+	
 	public static void main(String[] args)
 	{
-		ID = Integer.parseInt(args[0]);
+		// Temporary Initialization
+		String[] addresses = {"224.1.1.1", "224.2.2.2", "224.3.3.3"};
+		int[] ports = {5000, 5001, 5002};
 		
+		initListeners(addresses, ports);
+		
+		FileManager FM = new FileManager();
+	}
+	
+	public static String getProtocolVersion()
+	{
+		return protocolVersion;
+	}
+	
+	public static int getServerId()
+	{
+		return serverId;
+	}
+	
+	private static void initListeners(String[] addresses, int[] ports)
+	{
 		try
 		{
-			// InetAddress MC_Address = InetAddress.getByName(args[1]);
-			// Integer MC_Port = Integer.parseInt(args[2]);
-			MC = new SocketListener(InetAddress.getByName("224.1.1.1"), 5000);
-			
-			// InetAddress MDB_Address = InetAddress.getByName(args[3]);
-			// Integer MDB_Port = Integer.parseInt(args[4]);
-			MDB = new SocketListener(InetAddress.getByName("224.2.2.2"), 5001);
-			
-			// InetAddress MDR_Address = InetAddress.getByName(args[5]);
-			// Integer MDR_Port = Integer.parseInt(args[6]);
-			MDR = new SocketListener(InetAddress.getByName("224.3.3.3"), 5002);
+			MC = new ThreadedMulticastSocket(InetAddress.getByName(addresses[0]), ports[0]);
+			MDB = new ThreadedMulticastSocket(InetAddress.getByName(addresses[1]), ports[1]);
+			MDR = new ThreadedMulticastSocket(InetAddress.getByName(addresses[2]), ports[2]);
 		}
 		catch (UnknownHostException e)
 		{
 			e.printStackTrace();
 		}
 		
-		FileManager FM = new FileManager();
+		new Thread(MC).start();
+		new Thread(MDB).start();
+		new Thread(MDR).start();
 		
-		if(args.length == 2)
+		boolean socketsReady = false;
+		while(!socketsReady)
 		{
-			file = args[1];
-			replicationDeg = Integer.parseInt(args[2]);
+			socketsReady = (MC.isReady() && MDB.isReady() && MDR.isReady());
 		}
+		System.out.println("Sockets Ready");
 	}
-
 }

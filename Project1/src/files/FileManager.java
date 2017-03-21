@@ -6,10 +6,10 @@ public class FileManager
 {
 	public FileManager()
 	{	
-		File originalFiles = new File("../Original_Files");
+		File disk = new File("../Disk");
 		File storedChunks = new File("../Stored_Chunks");
 		
-		createDir(originalFiles);
+		createDir(disk);
 		createDir(storedChunks);
 	}
 	

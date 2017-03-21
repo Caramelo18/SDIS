@@ -1,22 +1,23 @@
-package socket_listener;
+package socket;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.nio.charset.StandardCharsets;
 
-import message.Message;
+import message.MessageHandler;
 
-public class SocketListener implements Runnable
+public class ThreadedMulticastSocket implements Runnable
 {
 	private static final int MAX_SIZE = 65000;
-	private MulticastSocket socket;
+	private volatile MulticastSocket socket;
 	
 	private InetAddress address;
-	private Integer port;
+	private int port;
 	
-	public SocketListener(InetAddress address, Integer port)
+	private volatile boolean ready = false;
+	
+	public ThreadedMulticastSocket(InetAddress address, int port)
 	{
 		this.address = address;
 		this.port = port;
@@ -24,12 +25,10 @@ public class SocketListener implements Runnable
 
 	@Override
 	public void run()
-	{
+	{	
 		// Opening
-		System.out.println("Opening Socket");
-		System.out.println("Address: " + address.getHostName());
-		System.out.println("Port: " + port);
-		
+		System.out.println("Opening Socket " + address.getHostName() + ":" + port);
+
 		try
 		{
 			socket = new MulticastSocket(port);
@@ -40,6 +39,8 @@ public class SocketListener implements Runnable
 		{
 			e.printStackTrace();
 		}
+		
+		ready = true;
 		
 		// Receiving
 		byte[] buf = new byte[MAX_SIZE];
@@ -67,8 +68,31 @@ public class SocketListener implements Runnable
 	
 	public void handlePacket(DatagramPacket packet)
 	{
-		String response = new String(packet.getData(), 0, packet.getData().length, StandardCharsets.US_ASCII);
-		Message message = new Message(response);
-		System.out.print("Handling the packet");
+		new Thread(new MessageHandler(packet)).start();
+	}
+	
+	public boolean isReady()
+	{
+		return ready;
+	}
+	
+	public void sendPacket(byte[] buf)
+	{	
+		if(!ready)
+		{
+			System.out.println("Socket not ready yet");
+			return;
+		}
+		
+		DatagramPacket datagramPacket = new DatagramPacket(buf, buf.length, address, port);
+		
+		try
+		{
+			socket.send(datagramPacket);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }
