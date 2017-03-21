@@ -2,6 +2,7 @@ package message;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import chunk.Chunk;
 import peer.Peer;
@@ -20,7 +21,14 @@ public class MessageGenerator
 		header += " " + chunk.getReplicationDegree();
 		header += " " + CRLF + CRLF;
 		
-		return appendBytes(header.getBytes(), chunk.getBody());
+		try {
+			return appendBytes(header.getBytes("ASCII"), chunk.getBody());
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 		
 		// MDB
 	}
@@ -34,7 +42,14 @@ public class MessageGenerator
 		header += " " + chunk.getChunkNo();
 		header += " " + CRLF + CRLF;
 		
-		return header.getBytes();
+		try {
+			return header.getBytes("ASCII");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 		
 		// MC
 	}
@@ -48,7 +63,14 @@ public class MessageGenerator
 		header += " " + chunk.getChunkNo();
 		header += " " + CRLF + CRLF;
 		
-		return header.getBytes();
+		try {
+			return header.getBytes("ASCII");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 		
 		// MC
 	}
@@ -62,7 +84,14 @@ public class MessageGenerator
 		header += " " + chunk.getChunkNo();
 		header += " " + CRLF + CRLF;
 		
-		return appendBytes(header.getBytes(), chunk.getBody());
+		try {
+			return appendBytes(header.getBytes("ASCII"), chunk.getBody());
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 		
 		// MDR
 	}
@@ -75,7 +104,14 @@ public class MessageGenerator
 		header += " " + fileID;
 		header += " " + CRLF + CRLF;
 		
-		return header.getBytes();
+		try {
+			return header.getBytes("ASCII");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 		
 		// MC
 	}
@@ -89,7 +125,14 @@ public class MessageGenerator
 		header += " " + chunk.getChunkNo();
 		header += " " + CRLF + CRLF;
 		
-		return header.getBytes();
+		try {
+			return header.getBytes("ASCII");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 		
 		// MC
 	}
