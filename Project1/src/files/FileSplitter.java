@@ -25,7 +25,7 @@ public class FileSplitter
 		this.filename = filename;
 		this.replicationDegree = replicationDegree;
 		this.read = false;
-		
+		splitFile();
 	}
 	
 	private void splitFile()

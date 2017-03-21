@@ -11,7 +11,7 @@ public class MessageGenerator
 {
 	public static final String CRLF = "\r\n";
 	
-	public byte[] generatePUTCHUNK(Chunk chunk)
+	public static byte[] generatePUTCHUNK(Chunk chunk)
 	{
 		String header = "PUTCHUNK";
 		header += " " + Peer.getProtocolVersion();
@@ -33,7 +33,7 @@ public class MessageGenerator
 		// MDB
 	}
 
-	public byte[] generateSTORED(Chunk chunk)
+	public static byte[] generateSTORED(Chunk chunk)
 	{
 		String header = "STORED";
 		header += " " + Peer.getProtocolVersion();
@@ -54,7 +54,7 @@ public class MessageGenerator
 		// MC
 	}
 
-	public byte[] generateGETCHUNK(Chunk chunk)
+	public static byte[] generateGETCHUNK(Chunk chunk)
 	{
 		String header = "GETCHUNK";
 		header += " " + Peer.getProtocolVersion();
@@ -75,7 +75,7 @@ public class MessageGenerator
 		// MC
 	}
 
-	public byte[] generateCHUNK(Chunk chunk)
+	public static byte[] generateCHUNK(Chunk chunk)
 	{
 		String header = "CHUNK";
 		header += " " + Peer.getProtocolVersion();
@@ -96,7 +96,7 @@ public class MessageGenerator
 		// MDR
 	}
 
-	public byte[] generateDELETE(String fileID)
+	public static byte[] generateDELETE(String fileID)
 	{
 		String header = "DELETE";
 		header += " " + Peer.getProtocolVersion();
@@ -116,7 +116,7 @@ public class MessageGenerator
 		// MC
 	}
 
-	public byte[] generateREMOVED(Chunk chunk)
+	public static byte[] generateREMOVED(Chunk chunk)
 	{
 		String header = "REMOVED";
 		header += " " + Peer.getProtocolVersion();
@@ -137,7 +137,7 @@ public class MessageGenerator
 		// MC
 	}
 	
-	public byte[] appendBytes(byte[] header, byte[] body)
+	public static byte[] appendBytes(byte[] header, byte[] body)
 	{
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		

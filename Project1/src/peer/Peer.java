@@ -4,6 +4,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import files.FileManager;
+import message.MessageHandler;
+import protocol.Backup;
 import socket.ThreadedMulticastSocket;
 
 public class Peer
@@ -14,9 +16,9 @@ public class Peer
 	 // service access point
 	
 	// Socket Listeners
-	private static ThreadedMulticastSocket MC;
-	private static ThreadedMulticastSocket MDB;
-	private static ThreadedMulticastSocket MDR;
+	public static ThreadedMulticastSocket MC;
+	public static ThreadedMulticastSocket MDB;
+	public static ThreadedMulticastSocket MDR;
 	
 	public static void main(String[] args)
 	{
@@ -27,6 +29,7 @@ public class Peer
 		initListeners(addresses, ports);
 		
 		FileManager FM = new FileManager();
+		new Thread(new Backup("Teste.mp4", 1)).start();
 	}
 	
 	public static String getProtocolVersion()
