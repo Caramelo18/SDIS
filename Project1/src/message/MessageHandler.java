@@ -3,6 +3,8 @@ package message;
 import java.net.DatagramPacket;
 import java.util.Arrays;
 
+import peer.Peer;
+
 public class MessageHandler implements Runnable
 {
 	private DatagramPacket packet;
@@ -11,9 +13,15 @@ public class MessageHandler implements Runnable
 	
 	public MessageHandler(DatagramPacket packet)
 	{
-		System.out.print("Handling the packet");
+		System.out.println("Handling the packet");
 		
 		this.packet = packet;
+		
+		this.parseMessage();
+	}
+	
+	private void parseMessage()
+	{
 		byte[] packetData = packet.getData();
 		
 		int delimiterIndex = indexOf(packetData, MessageGenerator.CRLF.getBytes());
@@ -23,6 +31,12 @@ public class MessageHandler implements Runnable
 		
 		String headerString = new String(headerBytes, 0, headerBytes.length);
 		headerTokens = headerString.split(" ");
+		System.out.println(headerString);
+		
+		if(Integer.valueOf(headerTokens[2]) == Peer.getServerId())
+			System.out.println("Receiving packets from self");
+		else
+			System.out.println("Receiving packets from outside");
 	}
 
 	@Override
