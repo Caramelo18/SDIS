@@ -34,11 +34,19 @@ public class FileSplitter
 		
 		File file = new File(filename);
 		
+		FileIDGenerator fid = new FileIDGenerator(filename);
+		
+		String fileID = fid.getHash();
+		
+		int chunkNo = 0;
+		
 		try (BufferedInputStream bufinst = new BufferedInputStream (new FileInputStream(file)))
 		{
 			int tmp = 0;
 			while ((tmp = bufinst.read(buffer)) > 0) {
-				//chunkList.add(buffer);
+				Chunk chunk = new Chunk(fileID, chunkNo, replicationDegree, buffer);
+				chunkList.add(chunk);
+				chunkNo++;
 			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
