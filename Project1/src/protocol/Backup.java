@@ -22,7 +22,22 @@ public class Backup implements Runnable
 		
 		for(int i = 0; i < chunks.size(); i++)
 		{
-			new Thread(new BackupChunk(chunks.get(i))).start();
+			Thread thread = new Thread(new BackupChunk(chunks.get(i)));
+			thread.start();
+			
+			/*
+			// Sender Socket eliminated the need to wait
+			// Keeping this here in case there will be a future need for it
+			
+			try
+			{
+				thread.join();
+			}
+			catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+			*/
 		}
 	}
 	

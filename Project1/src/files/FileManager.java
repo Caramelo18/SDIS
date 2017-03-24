@@ -36,4 +36,9 @@ public class FileManager
 		    }
 		}
 	}
+	
+	public void storeChunk()
+	{
+		
+	}
 }

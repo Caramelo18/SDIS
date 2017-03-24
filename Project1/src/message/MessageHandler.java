@@ -17,10 +17,10 @@ public class MessageHandler implements Runnable
 		
 		this.packet = packet;
 		
-		this.parseMessage();
+		this.splitMessage();
 	}
 	
-	private void parseMessage()
+	private void splitMessage()
 	{
 		byte[] packetData = packet.getData();
 		
@@ -31,12 +31,44 @@ public class MessageHandler implements Runnable
 		
 		String headerString = new String(headerBytes, 0, headerBytes.length);
 		headerTokens = headerString.split(" ");
-		System.out.println(headerString);
 		
+		parseMessage();
+	}
+	
+	private void parseMessage()
+	{
 		if(Integer.valueOf(headerTokens[2]) == Peer.getServerId())
 			System.out.println("Receiving packets from self");
 		else
 			System.out.println("Receiving packets from outside");
+		
+		String messageType = headerTokens[0];
+		switch(messageType)
+		{
+		case "PUTCHUNK":
+			System.out.println("Received a PUTCHUNK: " + headerTokens[4]);
+			break;
+			
+		case "STORED":
+			System.out.println("Received a STORED");
+			break;
+			
+		case "GETCHUNK":
+			System.out.println("Received a GETCHUNK");
+			break;
+			
+		case "CHUNK":
+			System.out.println("Received a CHUNK");
+			break;
+			
+		case "DELETE":
+			System.out.println("Received a DELETE");
+			break;
+			
+		case "REMOVED":
+			System.out.println("Received a REMOVED");
+			break;
+		}
 	}
 
 	@Override

@@ -7,17 +7,17 @@ import java.net.MulticastSocket;
 
 import message.MessageHandler;
 
-public class ThreadedMulticastSocket implements Runnable
+public class ThreadedMulticastSocketListener implements Runnable
 {
 	private static final int MAX_SIZE = 65000;
-	private volatile MulticastSocket socket;
+	private MulticastSocket socket;
 	
 	private InetAddress address;
 	private int port;
 	
 	private volatile boolean ready = false;
 	
-	public ThreadedMulticastSocket(InetAddress address, int port)
+	public ThreadedMulticastSocketListener(InetAddress address, int port)
 	{
 		this.address = address;
 		this.port = port;
@@ -94,5 +94,15 @@ public class ThreadedMulticastSocket implements Runnable
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public InetAddress getAddress()
+	{
+		return address;
+	}
+	
+	public int getPort()
+	{
+		return port;
 	}
 }

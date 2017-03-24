@@ -11,7 +11,7 @@ public class MessageGenerator
 {
 	public static final String CRLF = "\r\n";
 	
-	public static byte[] generatePUTCHUNK(Chunk chunk)
+	public synchronized static byte[] generatePUTCHUNK(Chunk chunk)
 	{
 		String header = "PUTCHUNK";
 		header += " " + Peer.getProtocolVersion();
@@ -33,7 +33,7 @@ public class MessageGenerator
 		// MDB
 	}
 
-	public static byte[] generateSTORED(Chunk chunk)
+	public synchronized static byte[] generateSTORED(Chunk chunk)
 	{
 		String header = "STORED";
 		header += " " + Peer.getProtocolVersion();
@@ -45,7 +45,6 @@ public class MessageGenerator
 		try {
 			return header.getBytes("ASCII");
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -54,7 +53,7 @@ public class MessageGenerator
 		// MC
 	}
 
-	public static byte[] generateGETCHUNK(Chunk chunk)
+	public synchronized static byte[] generateGETCHUNK(Chunk chunk)
 	{
 		String header = "GETCHUNK";
 		header += " " + Peer.getProtocolVersion();
@@ -66,7 +65,6 @@ public class MessageGenerator
 		try {
 			return header.getBytes("ASCII");
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -75,7 +73,7 @@ public class MessageGenerator
 		// MC
 	}
 
-	public static byte[] generateCHUNK(Chunk chunk)
+	public synchronized static byte[] generateCHUNK(Chunk chunk)
 	{
 		String header = "CHUNK";
 		header += " " + Peer.getProtocolVersion();
@@ -87,7 +85,6 @@ public class MessageGenerator
 		try {
 			return appendBytes(header.getBytes("ASCII"), chunk.getBody());
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -96,7 +93,7 @@ public class MessageGenerator
 		// MDR
 	}
 
-	public static byte[] generateDELETE(String fileID)
+	public synchronized static byte[] generateDELETE(String fileID)
 	{
 		String header = "DELETE";
 		header += " " + Peer.getProtocolVersion();
@@ -107,7 +104,6 @@ public class MessageGenerator
 		try {
 			return header.getBytes("ASCII");
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -116,7 +112,7 @@ public class MessageGenerator
 		// MC
 	}
 
-	public static byte[] generateREMOVED(Chunk chunk)
+	public synchronized static byte[] generateREMOVED(Chunk chunk)
 	{
 		String header = "REMOVED";
 		header += " " + Peer.getProtocolVersion();
@@ -128,7 +124,6 @@ public class MessageGenerator
 		try {
 			return header.getBytes("ASCII");
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -137,7 +132,7 @@ public class MessageGenerator
 		// MC
 	}
 	
-	public static byte[] appendBytes(byte[] header, byte[] body)
+	public synchronized static byte[] appendBytes(byte[] header, byte[] body)
 	{
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		

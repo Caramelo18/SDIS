@@ -6,7 +6,8 @@ import java.net.UnknownHostException;
 import files.FileManager;
 import message.MessageHandler;
 import protocol.Backup;
-import socket.ThreadedMulticastSocket;
+import socket.SenderSocket;
+import socket.ThreadedMulticastSocketListener;
 
 public class Peer
 {
@@ -16,9 +17,10 @@ public class Peer
 	 // service access point
 	
 	// Socket Listeners
-	public static ThreadedMulticastSocket MC;
-	public static ThreadedMulticastSocket MDB;
-	public static ThreadedMulticastSocket MDR;
+	private static ThreadedMulticastSocketListener MC;
+	private static ThreadedMulticastSocketListener MDB;
+	private static ThreadedMulticastSocketListener MDR;
+	private static SenderSocket SS;
 	
 	public static void main(String[] args)
 	{
@@ -27,9 +29,10 @@ public class Peer
 		int[] ports = {5000, 5001, 5002};
 		
 		initListeners(addresses, ports);
+		SS = new SenderSocket();
 		
 		FileManager FM = new FileManager();
-		new Thread(new Backup("Teste.mp4", 1)).start();
+		new Thread(new Backup("../Disk/pena.bmp", 1)).start();
 	}
 	
 	public static String getProtocolVersion()
@@ -46,9 +49,9 @@ public class Peer
 	{
 		try
 		{
-			MC = new ThreadedMulticastSocket(InetAddress.getByName(addresses[0]), ports[0]);
-			MDB = new ThreadedMulticastSocket(InetAddress.getByName(addresses[1]), ports[1]);
-			MDR = new ThreadedMulticastSocket(InetAddress.getByName(addresses[2]), ports[2]);
+			MC = new ThreadedMulticastSocketListener(InetAddress.getByName(addresses[0]), ports[0]);
+			MDB = new ThreadedMulticastSocketListener(InetAddress.getByName(addresses[1]), ports[1]);
+			MDR = new ThreadedMulticastSocketListener(InetAddress.getByName(addresses[2]), ports[2]);
 		}
 		catch (UnknownHostException e)
 		{
@@ -66,4 +69,25 @@ public class Peer
 		}
 		System.out.println("Sockets Ready");
 	}
+	
+	public static ThreadedMulticastSocketListener getMC()
+	{
+		return MC;
+	}
+	
+	public static ThreadedMulticastSocketListener getMDB()
+	{
+		return MDB;
+	}
+	
+	public static ThreadedMulticastSocketListener getMDR()
+	{
+		return MDR;
+	}
+	
+	public static SenderSocket getSenderSocket()
+	{
+		return SS;
+	}
+	
 }
