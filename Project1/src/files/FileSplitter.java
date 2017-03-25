@@ -19,6 +19,8 @@ public class FileSplitter
 	private static final int chunkSize = 64000;
 	private boolean read;
 	
+	private String fileID;
+	
 	public FileSplitter(String filename, int replicationDegree)
 	{
 		this.chunkList = new ArrayList<Chunk> ();
@@ -36,7 +38,7 @@ public class FileSplitter
 		
 		FileIDGenerator fid = new FileIDGenerator(filename);
 		
-		String fileID = fid.getHash();
+		fileID = fid.getHash();
 		
 		int chunkNo = 0;
 		
@@ -77,4 +79,8 @@ public class FileSplitter
 		x.getChunkList();
 	}
 
+	public String getFileID()
+	{
+		return this.fileID;
+	}
 }

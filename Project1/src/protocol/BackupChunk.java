@@ -27,7 +27,7 @@ public class BackupChunk implements Runnable
 		{
 			// Clear STORED count for this specific fileId
 			
-			System.out.println("Sending");
+			System.out.println("Sending " + this.chunk.getChunkNo());
 			byte[] message = MessageGenerator.generatePUTCHUNK(chunk);
 			// Peer.getMDB().sendPacket(message);
 			Peer.getSenderSocket().sendPacket(message, SenderSocket.Destination.MDB);

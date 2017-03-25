@@ -4,6 +4,7 @@ import java.net.DatagramPacket;
 import java.util.Arrays;
 
 import peer.Peer;
+import protocol.Backup;
 
 public class MessageHandler implements Runnable
 {
@@ -47,6 +48,7 @@ public class MessageHandler implements Runnable
 		{
 		case "PUTCHUNK":
 			System.out.println("Received a PUTCHUNK: " + headerTokens[4]);
+			Backup.addStoredChunk(Integer.valueOf(headerTokens[4]), Integer.valueOf(headerTokens[2]));
 			break;
 			
 		case "STORED":
