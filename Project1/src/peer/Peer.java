@@ -33,7 +33,7 @@ public class Peer implements RMI
 		int[] ports = {5000, 5001, 5002};
 		protocolVersion = "1.0";
 		// serverId = null;
-		serviceAccessPoint = "RMI";
+		serviceAccessPoint = "RMI1";
 		
 		initListeners(addresses, ports);
 		SS = new SenderSocket();
@@ -75,27 +75,10 @@ public class Peer implements RMI
 	{
 		Peer peer = new Peer();
 		
-		Registry registry;
-		try
-		{
-			registry = LocateRegistry.createRegistry(1099);
-		}
-		catch (RemoteException e1)
-		{
-			try
-			{
-				registry = LocateRegistry.getRegistry();
-			}
-			catch (RemoteException e)
-			{
-				e.printStackTrace();
-				return;
-			}
-		}
-		
 		try
 		{
 			RMI rmi = (RMI) UnicastRemoteObject.exportObject(peer, 0);
+			Registry registry = LocateRegistry.getRegistry();
             registry.bind(serviceAccessPoint, rmi);
 		}
 		catch (AlreadyBoundException e)
