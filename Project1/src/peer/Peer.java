@@ -2,6 +2,7 @@ package peer;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.rmi.RemoteException;
 
 import files.FileManager;
 import message.MessageHandler;
@@ -9,7 +10,7 @@ import protocol.Backup;
 import socket.SenderSocket;
 import socket.ThreadedMulticastSocketListener;
 
-public class Peer
+public class Peer implements RMI
 {
 	// Peer Information
 	 private static String protocolVersion;
@@ -32,6 +33,8 @@ public class Peer
 		SS = new SenderSocket();
 		
 		FileManager FM = new FileManager();
+		
+		
 		new Thread(new Backup("../Disk/pena.bmp", 1)).start();
 	}
 	
@@ -88,6 +91,36 @@ public class Peer
 	public static SenderSocket getSenderSocket()
 	{
 		return SS;
+	}
+
+	@Override
+	public void backup(String filename, int replicationDegree) throws RemoteException
+	{
+		
+	}
+
+	@Override
+	public void restore(String filename) throws RemoteException
+	{
+		
+	}
+
+	@Override
+	public void delete(String filename) throws RemoteException
+	{
+		
+	}
+
+	@Override
+	public void space(int kbytes) throws RemoteException
+	{
+		
+	}
+
+	@Override
+	public void state() throws RemoteException
+	{
+		
 	}
 	
 }
