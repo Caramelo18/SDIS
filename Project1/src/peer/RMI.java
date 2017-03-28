@@ -11,7 +11,7 @@ public interface RMI extends Remote
 
 	void delete(String filename) throws RemoteException;
 
-	void space(int kbytes) throws RemoteException;
+	void reclaim(int kbytes) throws RemoteException;
 	
 	void state() throws RemoteException;
 }
