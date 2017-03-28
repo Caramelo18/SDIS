@@ -2,6 +2,7 @@ package peer;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -95,7 +96,12 @@ public class Peer implements RMI
 		try
 		{
 			RMI rmi = (RMI) UnicastRemoteObject.exportObject(peer, 0);
-            registry.rebind(serviceAccessPoint, rmi); // Rebind not bind, to prevent already bound exception
+            registry.bind(serviceAccessPoint, rmi);
+		}
+		catch (AlreadyBoundException e)
+		{
+			System.out.println("RMI Object already bound");
+			e.printStackTrace();
 		}
 		catch (RemoteException e)
 		{
