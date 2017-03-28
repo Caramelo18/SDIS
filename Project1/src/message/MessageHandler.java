@@ -3,8 +3,10 @@ package message;
 import java.net.DatagramPacket;
 import java.util.Arrays;
 
+import files.FileManager;
 import peer.Peer;
 import protocol.Backup;
+import socket.SenderSocket;
 
 public class MessageHandler implements Runnable
 {
@@ -38,8 +40,15 @@ public class MessageHandler implements Runnable
 	
 	private void parseMessage()
 	{
-		if(Integer.valueOf(headerTokens[2]) == Peer.getServerId())
+		if(Integer.valueOf(headerTokens[2]) == Peer.getServerId()){
 			System.out.println("Receiving packets from self");
+			//return;
+		}
+		else if(headerTokens[1] != Peer.getProtocolVersion())
+		{
+			System.out.println("Different protocol version");
+			return;
+		}
 		else
 			System.out.println("Receiving packets from outside");
 		
@@ -48,11 +57,16 @@ public class MessageHandler implements Runnable
 		{
 		case "PUTCHUNK":
 			System.out.println("Received a PUTCHUNK: " + headerTokens[4]);
-			Backup.addStoredChunk(Integer.valueOf(headerTokens[4]), Integer.valueOf(headerTokens[2]));
+			FileManager.storeChunk(headerTokens[3], headerTokens[4], body);
+			
+			//ver se o disco já está cheio
+			byte[] response = MessageGenerator.generateSTORED(headerTokens[3], headerTokens[4]);
+			Peer.getSenderSocket().sendPacket(response, SenderSocket.Destination.MC);
 			break;
 			
 		case "STORED":
 			System.out.println("Received a STORED");
+			Backup.addStoredChunk(Integer.valueOf(headerTokens[4]), Integer.valueOf(headerTokens[2]));
 			break;
 			
 		case "GETCHUNK":

@@ -33,13 +33,13 @@ public class MessageGenerator
 		// MDB
 	}
 
-	public synchronized static byte[] generateSTORED(Chunk chunk)
+	public synchronized static byte[] generateSTORED(String fileID, String chunkNo)
 	{
 		String header = "STORED";
 		header += " " + Peer.getProtocolVersion();
 		header += " " + Peer.getServerId();
-		header += " " + chunk.getFileId();
-		header += " " + chunk.getChunkNo();
+		header += " " + fileID;
+		header += " " + chunkNo;
 		header += " " + CRLF + CRLF;
 		
 		try {
