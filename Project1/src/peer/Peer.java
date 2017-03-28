@@ -74,11 +74,27 @@ public class Peer implements RMI
 	{
 		Peer peer = new Peer();
 		
+		Registry registry;
+		try
+		{
+			registry = LocateRegistry.createRegistry(1099);
+		}
+		catch (RemoteException e1)
+		{
+			try
+			{
+				registry = LocateRegistry.getRegistry();
+			}
+			catch (RemoteException e)
+			{
+				e.printStackTrace();
+				return;
+			}
+		}
+		
 		try
 		{
 			RMI rmi = (RMI) UnicastRemoteObject.exportObject(peer, 0);
-			// Registry registry = LocateRegistry.getRegistry();
-			Registry registry = LocateRegistry.createRegistry(1099);
             registry.rebind(serviceAccessPoint, rmi); // Rebind not bind, to prevent already bound exception
 		}
 		catch (RemoteException e)
