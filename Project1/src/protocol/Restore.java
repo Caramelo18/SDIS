@@ -3,6 +3,7 @@ package protocol;
 import java.util.HashMap;
 
 import data.DataManager;
+import files.FileManager;
 import message.MessageGenerator;
 import peer.Peer;
 import received.ChunkRec;
@@ -59,5 +60,7 @@ public class Restore implements Runnable
 				}
 			}
 		}
+		
+		FileManager.restoreFile(fileParts);
 	}
 }

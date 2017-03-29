@@ -3,6 +3,7 @@ package files;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.HashMap;
 
 import chunk.Chunk;
 import data.DataManager;
@@ -74,5 +75,10 @@ public class FileManager
 		DM.addStoredFilesData(fileId, chunkNo, replicationDegree);
 		
 		return true;
+	}
+	
+	public static void restoreFile(HashMap<Integer, byte[]> fileParts)
+	{
+		
 	}
 }
