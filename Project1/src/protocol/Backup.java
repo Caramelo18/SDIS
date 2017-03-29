@@ -1,23 +1,19 @@
 package protocol;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import chunk.Chunk;
 import data.DataManager;
 import files.FileSplitter;
-import message.MessageHandler;
 import peer.Peer;
 
 public class Backup implements Runnable
 {
 	private FileSplitter FS;
-	private int replicationDegree;
 	
 	public Backup(String filename, int replicationDegree)
 	{
 		FS = new FileSplitter(filename, replicationDegree);
-		this.replicationDegree = replicationDegree;
 	}
 
 	@Override
