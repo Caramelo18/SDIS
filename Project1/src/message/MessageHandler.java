@@ -60,6 +60,8 @@ public class MessageHandler implements Runnable
 		{
 		case "PUTCHUNK":
 			
+			System.out.println("BODY LEN: " + body.length);
+			
 			if(FileManager.storeChunk(headerTokens[3], Integer.valueOf(headerTokens[4]), body, Integer.valueOf(headerTokens[5])))
 			{
 				byte[] response = MessageGenerator.generateSTORED(headerTokens[3], headerTokens[4]);
