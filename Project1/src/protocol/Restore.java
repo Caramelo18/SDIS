@@ -1,5 +1,7 @@
 package protocol;
 
+import java.util.HashMap;
+
 import data.DataManager;
 import message.MessageGenerator;
 import peer.Peer;
@@ -8,10 +10,12 @@ import received.ChunkRec;
 public class Restore implements Runnable
 {
 	private String filename;
+	private HashMap<Integer, byte[]> fileParts;
 	
 	public Restore(String filename)
 	{
 		this.filename = filename;
+		fileParts = new HashMap<Integer, byte[]>();
 	}
 
 	@Override
@@ -32,12 +36,28 @@ public class Restore implements Runnable
 			byte[] message = MessageGenerator.generateGETCHUNK(fileId, chunkNo);
 			Peer.getMDB().sendPacket(message);
 			
-			float currTime = System.nanoTime();
-			while(ChunkRec.getMessage(fileId, chunkNo) == null)
+			long startTime = System.nanoTime();
+			boolean pooling = true;
+			
+			while(pooling)
 			{
+				byte[] received = ChunkRec.getMessage(fileId, chunkNo);
+				if(received != null)
+				{
+					fileParts.put(chunkNo, received);
+					chunkNo++;
+					
+					if(received.length < 64000)
+						running = false;
+					
+					pooling = false;
+				}
 				
+				if(((double)startTime - System.nanoTime())/ 1000000 > 500)
+				{
+					pooling = false;
+				}
 			}
 		}
 	}
-
 }
