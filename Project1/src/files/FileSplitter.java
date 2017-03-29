@@ -78,6 +78,11 @@ public class FileSplitter
 		
 		x.getChunkList();
 	}
+	
+	public String getFilename()
+	{
+		return filename;
+	}
 
 	public String getFileID()
 	{

@@ -10,8 +10,8 @@ public class FileManager
 {
 	public FileManager()
 	{	
-		File disk = new File("../Disk");
-		File storedChunks = new File("../Stored_Chunks");
+		File disk = new File("../Files");
+		File storedChunks = new File("../Chunks");
 		
 		createDir(disk);
 		createDir(storedChunks);
@@ -43,7 +43,7 @@ public class FileManager
 	
 	public static void storeChunk(String fileID, String chunkNo, byte[] body)
 	{
-		String filename = "../Stored_Chunks/" + fileID + "-" + chunkNo;
+		String filename = "../Chunks/" + fileID + "-" + chunkNo;
 		
 		try {
 			FileOutputStream fos = new FileOutputStream(filename);

@@ -8,10 +8,14 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
+import data.DataManager;
 import files.FileManager;
 import protocol.Backup;
+import protocol.Stored;
 import socket.SenderSocket;
 import socket.ThreadedMulticastSocketListener;
+
+// TESTE "../Files/pena.bmp"
 
 public class Peer implements RMI
 {
@@ -26,22 +30,24 @@ public class Peer implements RMI
 	private static ThreadedMulticastSocketListener MDR;
 	private static SenderSocket SS;
 	
+	// Data Manager
+	private static DataManager DM;
+	
 	public static void main(String[] args)
 	{
 		// Temporary Arguments Initialization
 		String[] addresses = {"224.1.1.1", "224.2.2.2", "224.3.3.3"};
 		int[] ports = {5000, 5001, 5002};
 		protocolVersion = "1.0";
-		// serverId = null;
-		serviceAccessPoint = "RMI1";
+		serverId = 2;
+		serviceAccessPoint = "RMI2";
 		
 		initListeners(addresses, ports);
 		SS = new SenderSocket();
-		
-		initRMI();
 		FileManager FM = new FileManager();
-		
-		// new Thread(new Backup("../Disk/pena.bmp", 1)).start();
+		DM = new DataManager();
+		initRMI();
+		Stored.initStored();
 	}
 	
 	// INITS
@@ -79,12 +85,7 @@ public class Peer implements RMI
 		{
 			RMI rmi = (RMI) UnicastRemoteObject.exportObject(peer, 0);
 			Registry registry = LocateRegistry.getRegistry();
-            registry.bind(serviceAccessPoint, rmi);
-		}
-		catch (AlreadyBoundException e)
-		{
-			System.out.println("RMI Object already bound");
-			e.printStackTrace();
+            registry.rebind(serviceAccessPoint, rmi);
 		}
 		catch (RemoteException e)
 		{
@@ -122,6 +123,11 @@ public class Peer implements RMI
 	public static SenderSocket getSenderSocket()
 	{
 		return SS;
+	}
+	
+	public static DataManager getDataManager()
+	{
+		return DM;
 	}
 
 	// OTHER METHODS

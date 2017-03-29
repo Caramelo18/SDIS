@@ -16,17 +16,13 @@ public class BackupChunk implements Runnable
 
 	@Override
 	public void run()
-	{
-		// Start listening to STORED for this specific fileId
-		
+	{	
 		int attempts = 0;
 		int waitingTime = (int)Math.pow(2, attempts);
 		
 		boolean running = true;
 		while(running)
-		{
-			// Clear STORED count for this specific fileId
-			
+		{			
 			System.out.println("Sending " + this.chunk.getChunkNo());
 			byte[] message = MessageGenerator.generatePUTCHUNK(chunk);
 			// Peer.getMDB().sendPacket(message);
@@ -41,8 +37,7 @@ public class BackupChunk implements Runnable
 				e.printStackTrace();
 			}
 			
-			// Get STORED count
-			int storedCount = 1;
+			int storedCount = Stored.peerCount(chunk.getFileId(), chunk.getChunkNo());
 			if(storedCount < chunk.getReplicationDegree())
 			{
 				attempts++;

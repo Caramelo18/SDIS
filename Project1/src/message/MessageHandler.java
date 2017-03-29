@@ -6,6 +6,7 @@ import java.util.Arrays;
 import files.FileManager;
 import peer.Peer;
 import protocol.Backup;
+import protocol.Stored;
 import socket.SenderSocket;
 
 public class MessageHandler implements Runnable
@@ -15,11 +16,8 @@ public class MessageHandler implements Runnable
 	private byte[] body;
 	
 	public MessageHandler(DatagramPacket packet)
-	{
-		System.out.println("Handling the packet");
-		
-		this.packet = packet;
-		
+	{	
+		this.packet = packet;	
 		this.splitMessage();
 	}
 	
@@ -41,48 +39,49 @@ public class MessageHandler implements Runnable
 	private void parseMessage()
 	{
 		if(Integer.valueOf(headerTokens[2]) == Peer.getServerId()){
-			System.out.println("Receiving packets from self");
-			//return;
+			// System.out.println("Receiving packets from self");
+			return;
 		}
-		else if(headerTokens[1] != Peer.getProtocolVersion())
+		else if(!headerTokens[1].equals(Peer.getProtocolVersion()))
 		{
 			System.out.println("Different protocol version");
 			return;
 		}
 		else
-			System.out.println("Receiving packets from outside");
+		{
+			// System.out.println("Receiving packets from outside");
+		}
 		
 		String messageType = headerTokens[0];
 		switch(messageType)
 		{
 		case "PUTCHUNK":
-			System.out.println("Received a PUTCHUNK: " + headerTokens[4]);
+			//ver se o disco já está cheio
+			
 			FileManager.storeChunk(headerTokens[3], headerTokens[4], body);
 			
-			//ver se o disco já está cheio
 			byte[] response = MessageGenerator.generateSTORED(headerTokens[3], headerTokens[4]);
 			Peer.getSenderSocket().sendPacket(response, SenderSocket.Destination.MC);
 			break;
 			
 		case "STORED":
-			System.out.println("Received a STORED");
-			Backup.addStoredChunk(Integer.valueOf(headerTokens[4]), Integer.valueOf(headerTokens[2]));
+			Stored.addMessage(headerTokens[3], Integer.valueOf(headerTokens[4]), Integer.valueOf(headerTokens[2]));
 			break;
 			
 		case "GETCHUNK":
-			System.out.println("Received a GETCHUNK");
+
 			break;
 			
 		case "CHUNK":
-			System.out.println("Received a CHUNK");
+
 			break;
 			
 		case "DELETE":
-			System.out.println("Received a DELETE");
+
 			break;
 			
 		case "REMOVED":
-			System.out.println("Received a REMOVED");
+
 			break;
 		}
 	}
