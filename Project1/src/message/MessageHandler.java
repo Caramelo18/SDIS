@@ -7,6 +7,7 @@ import data.DataManager;
 import files.FileManager;
 import peer.Peer;
 import protocol.Backup;
+import received.ChunkRec;
 import received.Stored;
 import socket.SenderSocket;
 
@@ -54,6 +55,8 @@ public class MessageHandler implements Runnable
 		}
 		
 		String messageType = headerTokens[0];
+		DataManager DM;
+		
 		switch(messageType)
 		{
 		case "PUTCHUNK":
@@ -68,14 +71,14 @@ public class MessageHandler implements Runnable
 			
 		case "STORED":
 			
-			DataManager DM = Peer.getDataManager();
-		
-			
+			DM = Peer.getDataManager();
 			Stored.addMessage(headerTokens[3], Integer.valueOf(headerTokens[4]), Integer.valueOf(headerTokens[2]));
 			break;
 			
 		case "GETCHUNK":
 
+			DM = Peer.getDataManager();
+			ChunkRec.addMessage(headerTokens[3], Integer.valueOf(headerTokens[4]), body);
 			break;
 			
 		case "CHUNK":

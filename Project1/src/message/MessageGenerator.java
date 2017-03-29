@@ -53,13 +53,13 @@ public class MessageGenerator
 		// MC
 	}
 
-	public synchronized static byte[] generateGETCHUNK(Chunk chunk)
+	public synchronized static byte[] generateGETCHUNK(String fileId, Integer chunkNo)
 	{
 		String header = "GETCHUNK";
 		header += " " + Peer.getProtocolVersion();
 		header += " " + Peer.getServerId();
-		header += " " + chunk.getFileId();
-		header += " " + chunk.getChunkNo();
+		header += " " + fileId;
+		header += " " + chunkNo;
 		header += " " + CRLF + CRLF;
 		
 		try {

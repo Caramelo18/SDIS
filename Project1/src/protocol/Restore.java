@@ -1,7 +1,9 @@
 package protocol;
 
 import data.DataManager;
+import message.MessageGenerator;
 import peer.Peer;
+import received.ChunkRec;
 
 public class Restore implements Runnable
 {
@@ -22,7 +24,20 @@ public class Restore implements Runnable
 			System.out.println("No such file backed up");
 			return;
 		}
-		System.out.println(fileId);
+
+		boolean running = true;
+		int chunkNo = 0;
+		while(running)
+		{
+			byte[] message = MessageGenerator.generateGETCHUNK(fileId, chunkNo);
+			Peer.getMDB().sendPacket(message);
+			
+			float currTime = System.nanoTime();
+			while(ChunkRec.getMessage(fileId, chunkNo) == null)
+			{
+				
+			}
+		}
 	}
 
 }
