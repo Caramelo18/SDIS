@@ -23,6 +23,8 @@ public class Restore implements Runnable
 	@Override
 	public void run()
 	{
+		System.out.println("HERE");
+		
 		DataManager DM = Peer.getDataManager();
 		String fileId = DM.getFileId(filename);
 		if(fileId == null)
@@ -38,6 +40,8 @@ public class Restore implements Runnable
 			return;
 		}
 
+		System.out.println("HERE");
+		
 		boolean running = true;
 		int chunkNo = 0;
 		int attempts = 0;
@@ -72,8 +76,10 @@ public class Restore implements Runnable
 					found = true;
 					pooling = false;
 				}
+				else
+					System.out.println("NULL");
 				
-				if(((double)startTime - System.nanoTime())/ 1000000 > 500)
+				if(((double)System.nanoTime()- startTime)/ 1000000 > 500)
 				{
 					pooling = false;
 				}
@@ -82,6 +88,8 @@ public class Restore implements Runnable
 			if(!found)
 				attempts++;
 		}
+		
+		System.out.println("HERE");
 		
 		FileManager.restoreFile(f, fileParts);
 	}

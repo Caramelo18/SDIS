@@ -16,6 +16,7 @@ import data.DataManager;
 import files.FileManager;
 import protocol.Backup;
 import protocol.Restore;
+import received.ChunkRec;
 import received.Stored;
 import socket.SenderSocket;
 import socket.ThreadedMulticastSocketListener;
@@ -78,6 +79,7 @@ public class Peer implements RMI
 		
 		initRMI();
 		Stored.initStored();
+		ChunkRec.initChunkRec();
 	}
 	
 	// INITS

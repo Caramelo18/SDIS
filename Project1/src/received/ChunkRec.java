@@ -7,7 +7,7 @@ public class ChunkRec
 	private static volatile HashMap<String, HashMap<Integer, byte[]>> chunkMessages;
 	// FileId, ChunkNo, Body
 	
-	public static void initChunk()
+	public static void initChunkRec()
 	{
 		chunkMessages = new HashMap<String, HashMap<Integer, byte[]>>();
 	}
