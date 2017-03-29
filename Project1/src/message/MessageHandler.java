@@ -24,7 +24,8 @@ public class MessageHandler implements Runnable
 	
 	private void splitMessage()
 	{
-		byte[] packetData = packet.getData();
+		byte[] packetData = new byte[packet.getLength()];
+		System.arraycopy(packet.getData(), packet.getOffset(), packetData, 0, packet.getLength());
 		
 		int delimiterIndex = indexOf(packetData, MessageGenerator.CRLF.getBytes());
 		
