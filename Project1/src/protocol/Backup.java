@@ -49,35 +49,4 @@ public class Backup implements Runnable
 			thread.start();
 		}
 	}
-	
-	/*
-	
-	public static void resetStoredChunks()
-	{
-		storedChunks = new HashMap<Integer, ArrayList<Integer>>();
-	}
-	
-	public static void addStoredChunk(int chunkNo, int peerID)
-	{
-		if(storedChunks.get(chunkNo) == null)
-			storedChunks.put(chunkNo, new ArrayList<Integer>());
-		
-		storedChunks.get(chunkNo).add(peerID);
-		
-		storedChunks.forEach( (k, v) -> System.out.println(k + "  " + v));
-	}
-	
-	private boolean storedChunk(int chunkNo)
-	{
-		if(storedChunks.get(chunkNo) == null)
-			return false;
-		
-		ArrayList<Integer> chunkOwners = storedChunks.get(chunkNo);
-		if(chunkOwners.size() < this.replicationDegree)
-			return false;
-		
-		return true;
-	}
-	
-	*/
 }

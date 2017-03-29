@@ -65,6 +65,7 @@ public class MessageHandler implements Runnable
 			break;
 			
 		case "STORED":
+			
 			Stored.addMessage(headerTokens[3], Integer.valueOf(headerTokens[4]), Integer.valueOf(headerTokens[2]));
 			break;
 			

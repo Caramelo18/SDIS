@@ -73,12 +73,6 @@ public class FileSplitter
 		}
 	}
 	
-	public static void main(String[] args) throws FileNotFoundException, IOException{
-		FileSplitter x = new FileSplitter("./Teste.mp4", 2);
-		
-		x.getChunkList();
-	}
-	
 	public String getFilename()
 	{
 		return filename;

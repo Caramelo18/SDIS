@@ -44,7 +44,7 @@ public class Peer implements RMI
 		
 		initListeners(addresses, ports);
 		SS = new SenderSocket();
-		FileManager FM = new FileManager();
+		FileManager.initFileManager();
 		DM = new DataManager();
 		initRMI();
 		Stored.initStored();
@@ -135,32 +135,32 @@ public class Peer implements RMI
 	@Override
 	public void backup(String filename, int replicationDegree) throws RemoteException
 	{
-		System.out.println("BACKUP was called");
-		new Thread(new Backup(filename, replicationDegree)).start();
+		String filenameWithPath = "../Peer" + Peer.getServerId() + "/Files/" + filename;
+		new Thread(new Backup(filenameWithPath, replicationDegree)).start();
 	}
 
 	@Override
 	public void restore(String filename) throws RemoteException
 	{
-		System.out.println("RESTORE was called");
+		
 	}
 
 	@Override
 	public void delete(String filename) throws RemoteException
 	{
-		System.out.println("DELETE was called");
+		
 	}
 
 	@Override
 	public void reclaim(int kbytes) throws RemoteException
 	{
-		System.out.println("RECLAIM was called");
+		
 	}
 
 	@Override
 	public void state() throws RemoteException
 	{
-		System.out.println("STATE was called");
+		
 	}
 	
 }

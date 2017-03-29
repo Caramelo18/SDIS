@@ -5,19 +5,22 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import chunk.Chunk;
+import peer.Peer;
 
 public class FileManager
 {
-	public FileManager()
+	public static void initFileManager()
 	{	
-		File disk = new File("../Files");
-		File storedChunks = new File("../Chunks");
+		File peerFolder = new File("../Peer" + Peer.getServerId());
+		File disk = new File("../Peer" + Peer.getServerId() + "/Files");
+		File storedChunks = new File("../Peer" + Peer.getServerId() + "/Chunks");
 		
+		createDir(peerFolder);
 		createDir(disk);
 		createDir(storedChunks);
 	}
 	
-	public void createDir(File f)
+	public static void createDir(File f)
 	{
 		// if the directory does not exist, create it
 		if (!f.exists())
@@ -43,7 +46,7 @@ public class FileManager
 	
 	public static void storeChunk(String fileID, String chunkNo, byte[] body)
 	{
-		String filename = "../Chunks/" + fileID + "-" + chunkNo;
+		String filename = "../Peer" + Peer.getServerId() + "/" + "Chunks/" + fileID + "-" + chunkNo;
 		
 		try {
 			FileOutputStream fos = new FileOutputStream(filename);

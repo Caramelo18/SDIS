@@ -10,6 +10,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import peer.Peer;
+
 public class DataManager implements Serializable
 {
 	private ArrayList<StoredData> storedFilesData;
@@ -17,6 +19,8 @@ public class DataManager implements Serializable
 	
 	public DataManager()
 	{
+		// Tentar ler os metadados guardados antes
+		
 		storedFilesData = new ArrayList<StoredData>();
 		backedUpData = new ArrayList<BackedUpData>();
 	}
@@ -60,7 +64,7 @@ public class DataManager implements Serializable
 		FileOutputStream fout;
 		try
 		{
-			fout = new FileOutputStream("../metadata.ser");
+			fout = new FileOutputStream("../Peer" + Peer.getServerId() + "/metadata.ser");
 			ObjectOutputStream oos = new ObjectOutputStream(fout);
 			oos.writeObject(this);
 			
