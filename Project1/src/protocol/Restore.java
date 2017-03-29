@@ -83,6 +83,6 @@ public class Restore implements Runnable
 				attempts++;
 		}
 		
-		FileManager.restoreFile(fileParts);
+		FileManager.restoreFile(f, fileParts);
 	}
 }

@@ -3,6 +3,7 @@ package files;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 
 import chunk.Chunk;
@@ -77,8 +78,22 @@ public class FileManager
 		return true;
 	}
 	
-	public static void restoreFile(HashMap<Integer, byte[]> fileParts)
+	public static void restoreFile(File f, HashMap<Integer, byte[]> fileParts)
 	{
-		
+		try {
+			FileOutputStream fos = new FileOutputStream(f);
+			fileParts.forEach( (k, v) -> {
+				try {
+					fos.write(v);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			});
+			fos.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
