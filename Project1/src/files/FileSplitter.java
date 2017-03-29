@@ -31,30 +31,32 @@ public class FileSplitter
 	}
 	
 	private void splitFile()
-	{
+	{	
 		byte[] buffer = new byte[chunkSize];
-		
-		File file = new File(filename);
-		
-		FileIDGenerator fid = new FileIDGenerator(filename);
-		
+		File file = new File(filename);	
+		FileIDGenerator fid = new FileIDGenerator(filename);	
 		fileID = fid.getHash();
-		
 		int chunkNo = 0;
 		
 		try (BufferedInputStream bufinst = new BufferedInputStream (new FileInputStream(file)))
 		{
 			int tmp = 0;
-			while ((tmp = bufinst.read(buffer)) > 0) {
-				Chunk chunk = new Chunk(fileID, chunkNo, replicationDegree, buffer);
+			while ((tmp = bufinst.read(buffer)) > 0)
+			{
+				byte[] body = new byte[tmp];
+				System.arraycopy(buffer, 0, body, 0, tmp);
+				
+				Chunk chunk = new Chunk(fileID, chunkNo, replicationDegree, body);
 				chunkList.add(chunk);
 				chunkNo++;
 			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+		}
+		catch (FileNotFoundException e)
+		{
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		
