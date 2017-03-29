@@ -27,7 +27,7 @@ public class FileIDGenerator {
 	        }
 	        
 	        this.hash = sb.toString();
-	        System.out.println("SHA: " + this.hash);
+	        // System.out.println("SHA: " + this.hash);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

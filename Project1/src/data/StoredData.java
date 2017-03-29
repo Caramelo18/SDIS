@@ -6,16 +6,16 @@ import java.util.ArrayList;
 public class StoredData implements Serializable
 {
 	private String fileId;
-	private String chunk;
+	private int chunkNo;
 	private int desiredReplicationDegree;
-	private int currentReplicationDegree;
+	private ArrayList<Integer> peers;
 	
-	public StoredData(String fileId, String chunk, int desiredReplicationDegree)
+	public StoredData(String fileId, int chunkNo, int desiredReplicationDegree, ArrayList<Integer> peers)
 	{
 		this.fileId = fileId;
-		this.chunk = chunk;
+		this.chunkNo = chunkNo;
 		this.desiredReplicationDegree = desiredReplicationDegree;
-		this.currentReplicationDegree = 0;
+		this.peers = peers;
 	}
 	
 	// GETS
@@ -25,9 +25,9 @@ public class StoredData implements Serializable
 		return fileId;
 	}
 	
-	public String getChunk()
+	public int getChunkNo()
 	{
-		return chunk;
+		return chunkNo;
 	}
 	
 	public int getDesiredReplicationDegree()
@@ -35,8 +35,8 @@ public class StoredData implements Serializable
 		return desiredReplicationDegree;
 	}
 	
-	public int getCurrentReplicationDegree()
+	public ArrayList<Integer> getPeers()
 	{
-		return currentReplicationDegree;
+		return peers;
 	}
 }

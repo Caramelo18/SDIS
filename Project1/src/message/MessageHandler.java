@@ -3,6 +3,7 @@ package message;
 import java.net.DatagramPacket;
 import java.util.Arrays;
 
+import data.DataManager;
 import files.FileManager;
 import peer.Peer;
 import protocol.Backup;
@@ -56,17 +57,19 @@ public class MessageHandler implements Runnable
 		switch(messageType)
 		{
 		case "PUTCHUNK":
-			//ver se o disco já está cheio
 			
-			FileManager.storeChunk(headerTokens[3], headerTokens[4], body);
+			if(FileManager.storeChunk(headerTokens[3], Integer.valueOf(headerTokens[4]), body, Integer.valueOf(headerTokens[5])))
+			{
+				byte[] response = MessageGenerator.generateSTORED(headerTokens[3], headerTokens[4]);
+				Peer.getSenderSocket().sendPacket(response, SenderSocket.Destination.MC);
+			}
 			
-			byte[] response = MessageGenerator.generateSTORED(headerTokens[3], headerTokens[4]);
-			Peer.getSenderSocket().sendPacket(response, SenderSocket.Destination.MC);
 			break;
 			
 		case "STORED":
 			
-			// Se for um file que está a fazer store, atualizar o replication degree e responder stored na mesma
+			DataManager DM = Peer.getDataManager();
+		
 			
 			Stored.addMessage(headerTokens[3], Integer.valueOf(headerTokens[4]), Integer.valueOf(headerTokens[2]));
 			break;
@@ -117,32 +120,4 @@ public class MessageHandler implements Runnable
 	     }
 	   return -1;  
 	} 
-	
-	/*
-	private void parseType(String[] arr)
-	{
-		this.version = arr[1];
-		this.senderID = Integer.valueOf(arr[2]);
-		this.fileID = Integer.valueOf(arr[3]);
-		
-		switch(this.messageType){
-		case("PUTCHUNK"):
-			this.chunkNo = Integer.valueOf(arr[4]);
-			this.replicationDegree = Integer.valueOf(arr[5]);
-			break;
-		case("STORED"):
-			this.chunkNo = Integer.valueOf(arr[4]);
-			break;
-		case("GETCHUNK"):
-			this.chunkNo = Integer.valueOf(arr[4]);
-			break;
-		case("CHUNK"):
-			this.chunkNo = Integer.valueOf(arr[4]);
-			break;		
-		case("REMOVED"):
-			this.chunkNo = Integer.valueOf(arr[4]);
-			break;
-		}
-	}
-	*/
 }

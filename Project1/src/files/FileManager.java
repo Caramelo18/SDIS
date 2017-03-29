@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import chunk.Chunk;
+import data.DataManager;
 import peer.Peer;
 
 public class FileManager
@@ -44,16 +45,34 @@ public class FileManager
 		}
 	}
 	
-	public static void storeChunk(String fileID, String chunkNo, byte[] body)
-	{
-		String filename = "../Peer" + Peer.getServerId() + "/" + "Chunks/" + fileID + "-" + chunkNo;
+	public static boolean storeChunk(String fileId, int chunkNo, byte[] body, Integer replicationDegree)
+	{		
+		DataManager DM = Peer.getDataManager();
+		String filename = "../Peer" + Peer.getServerId() + "/" + "Chunks/" + fileId + "-" + chunkNo;
 		
-		try {
+		File f = new File(filename);
+		if(f.exists())
+		{
+			
+			return true;
+		}
+		
+		// TODO
+		// Falta ver aqui se existe espaço, pois caso não exista retorna false
+		
+		try
+		{
 			FileOutputStream fos = new FileOutputStream(filename);
 			fos.write(body);
 			fos.close();
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 		}
+		
+		DM.addStoredFilesData(fileId, chunkNo, replicationDegree);
+		
+		return true;
 	}
 }

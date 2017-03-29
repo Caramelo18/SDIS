@@ -39,6 +39,19 @@ public class Stored
 			peerList.add(peerId);
 	}
 	
+	public static ArrayList<Integer> getPeers(String fileId, Integer chunkNo)
+	{
+		HashMap<Integer, ArrayList<Integer>> innerHashMap = storedMessages.get(fileId);
+		if(innerHashMap == null)
+			return null;
+		
+		ArrayList<Integer> peerList = innerHashMap.get(chunkNo);
+		if(peerList == null)
+			return null;
+		
+		return peerList;
+	}
+	
 	public static int peerCount(String fileId, Integer chunkNo)
 	{
 		HashMap<Integer, ArrayList<Integer>> innerHashMap = storedMessages.get(fileId);

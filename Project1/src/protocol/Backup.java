@@ -24,7 +24,7 @@ public class Backup implements Runnable
 	public void run()
 	{
 		DataManager DM = Peer.getDataManager();
-		int result = DM.addBackedUpFile(FS.getFilename(), FS.getFileID());
+		int result = DM.addBackedUpData(FS.getFilename(), FS.getFileID());
 		
 		if(result == 1)
 		{

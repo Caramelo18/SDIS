@@ -1,5 +1,9 @@
 package peer;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
@@ -39,13 +43,38 @@ public class Peer implements RMI
 		String[] addresses = {"224.1.1.1", "224.2.2.2", "224.3.3.3"};
 		int[] ports = {5000, 5001, 5002};
 		protocolVersion = "1.0";
-		serverId = 4;
+		serverId = 1;
 		serviceAccessPoint = "RMI" + serverId;
 		
 		initListeners(addresses, ports);
 		SS = new SenderSocket();
 		FileManager.initFileManager();
-		DM = new DataManager();
+		
+		File f = new File("../Peer" + Peer.getServerId() + "/metadata.ser");
+		if(f.exists())
+		{
+			try
+			{
+				FileInputStream fin = new FileInputStream("../Peer" + Peer.getServerId() + "/metadata.ser");
+				ObjectInputStream ois = new ObjectInputStream(fin);
+				DM = (DataManager) ois.readObject();
+				ois.close();
+				fin.close();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			catch (ClassNotFoundException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		else
+		{
+			DM = new DataManager();
+		}
+		
 		initRMI();
 		Stored.initStored();
 	}
