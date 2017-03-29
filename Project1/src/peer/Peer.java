@@ -15,7 +15,8 @@ import java.rmi.server.UnicastRemoteObject;
 import data.DataManager;
 import files.FileManager;
 import protocol.Backup;
-import protocol.Stored;
+import protocol.Restore;
+import received.Stored;
 import socket.SenderSocket;
 import socket.ThreadedMulticastSocketListener;
 
@@ -171,7 +172,8 @@ public class Peer implements RMI
 	@Override
 	public void restore(String filename) throws RemoteException
 	{
-		
+		String filenameWithPath = "../Peer" + Peer.getServerId() + "/Files/" + filename;
+		new Thread(new Restore(filenameWithPath)).start();
 	}
 
 	@Override

@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import peer.Peer;
-import protocol.Stored;
+import received.Stored;
 
 public class DataManager implements Serializable
 {
@@ -19,6 +19,8 @@ public class DataManager implements Serializable
 		storedFilesData = new ArrayList<StoredData>();
 		backedUpData = new ArrayList<BackedUpData>();
 	}
+	
+	// STORED
 	
 	public void addStoredFilesData(String fileId, int chunkNo, int desiredReplicationDegree)
 	{	
@@ -49,6 +51,8 @@ public class DataManager implements Serializable
 			}
 		}
 	}
+	
+	// BACKUP
 	
 	/*
 	Retorna 0 - filename não existe
@@ -84,6 +88,20 @@ public class DataManager implements Serializable
 		
 		return 0;
 	}
+	
+	public String getFileId(String filename)
+	{
+		for(int i = 0; i < backedUpData.size(); i++)
+		{
+			BackedUpData BUD = backedUpData.get(i);
+			
+			if(BUD.getFilename().equals(filename))
+				return BUD.getFileId();
+		}
+		return null;
+	}
+	
+	// SERIALIZE
 
 	public void serialize()
 	{

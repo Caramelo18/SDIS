@@ -3,6 +3,7 @@ package protocol;
 import chunk.Chunk;
 import message.MessageGenerator;
 import peer.Peer;
+import received.Stored;
 import socket.SenderSocket;
 
 public class BackupChunk implements Runnable

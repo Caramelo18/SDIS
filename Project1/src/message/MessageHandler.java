@@ -7,7 +7,7 @@ import data.DataManager;
 import files.FileManager;
 import peer.Peer;
 import protocol.Backup;
-import protocol.Stored;
+import received.Stored;
 import socket.SenderSocket;
 
 public class MessageHandler implements Runnable
