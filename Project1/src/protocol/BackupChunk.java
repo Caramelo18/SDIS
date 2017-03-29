@@ -23,7 +23,6 @@ public class BackupChunk implements Runnable
 		boolean running = true;
 		while(running)
 		{			
-			System.out.println("Sending " + this.chunk.getChunkNo());
 			byte[] message = MessageGenerator.generatePUTCHUNK(chunk);
 			// Peer.getMDB().sendPacket(message);
 			Peer.getSenderSocket().sendPacket(message, SenderSocket.Destination.MDB);
@@ -49,7 +48,7 @@ public class BackupChunk implements Runnable
 				}
 				else
 				{
-					System.out.println("Trying again");
+					System.out.println("Trying again for chunkNo: " + chunk.getChunkNo());
 					waitingTime = (int)Math.pow(2, attempts);
 				}
 			}

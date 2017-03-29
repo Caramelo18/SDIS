@@ -66,6 +66,8 @@ public class MessageHandler implements Runnable
 			
 		case "STORED":
 			
+			// Se for um file que está a fazer store, atualizar o replication degree e responder stored na mesma
+			
 			Stored.addMessage(headerTokens[3], Integer.valueOf(headerTokens[4]), Integer.valueOf(headerTokens[2]));
 			break;
 			
