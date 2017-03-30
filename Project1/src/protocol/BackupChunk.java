@@ -55,7 +55,6 @@ public class BackupChunk implements Runnable
 			}
 			else
 			{
-				System.out.println("Finished with the desired replication degree");
 				running = false;
 			}
 		}

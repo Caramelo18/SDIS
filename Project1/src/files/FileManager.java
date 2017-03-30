@@ -1,6 +1,8 @@
 package files;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -55,7 +57,6 @@ public class FileManager
 		File f = new File(filename);
 		if(f.exists())
 		{
-			
 			return true;
 		}
 		
@@ -95,5 +96,34 @@ public class FileManager
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public static byte[] getChunk(String fileId, int chunkNo)
+	{
+		String filename = "../Peer" + Peer.getServerId() + "/" + "Chunks/" + fileId + "-" + chunkNo;
+		
+		File f = new File(filename);
+		if(f.exists())
+		{
+			try (BufferedInputStream bufinst = new BufferedInputStream (new FileInputStream(f)))
+			{
+				byte[] buffer = new byte[FileSplitter.chunkSize];
+				int tmp = bufinst.read(buffer);
+				
+				byte[] body = new byte[tmp];
+				System.arraycopy(buffer, 0, body, 0, tmp);
+				return body;
+			}
+			catch (FileNotFoundException e)
+			{
+				e.printStackTrace();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		return null;
 	}
 }

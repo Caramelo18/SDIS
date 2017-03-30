@@ -14,9 +14,10 @@ public class FileSplitter
 {
 	private ArrayList<Chunk> chunkList;
 	
+	public static final int chunkSize = 64000;
+	
 	private String filename;
 	private int replicationDegree;
-	private static final int chunkSize = 64000;
 	private boolean read;
 	
 	private String fileID;
@@ -65,11 +66,12 @@ public class FileSplitter
 	
 	public ArrayList<Chunk> getChunkList()
 	{
-		if(this.read){
-			System.out.println(this.chunkList.size());
+		if(this.read)
+		{
 			return this.chunkList;
 		}
-		else{
+		else
+		{
 			System.out.println("File hasn't been read yet");
 			return null;	
 		}

@@ -27,7 +27,7 @@ public class ThreadedMulticastSocketListener implements Runnable
 	public void run()
 	{	
 		// Opening
-		System.out.println("Opening Socket " + address.getHostName() + ":" + port);
+		// System.out.println("Opening Socket " + address.getHostName() + ":" + port);
 
 		try
 		{

@@ -42,7 +42,6 @@ public class Client
 		case "BACKUP":
 			try
 			{
-				System.out.println(operands.size());
 				rmi.backup(operands.get(0), Integer.parseInt(operands.get(1)));
 			}
 			catch (NumberFormatException e)

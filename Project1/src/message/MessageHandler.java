@@ -3,6 +3,7 @@ package message;
 import java.net.DatagramPacket;
 import java.util.Arrays;
 
+import chunk.Chunk;
 import data.DataManager;
 import files.FileManager;
 import peer.Peer;
@@ -19,7 +20,6 @@ public class MessageHandler implements Runnable
 	public MessageHandler(DatagramPacket packet)
 	{	
 		this.packet = packet;	
-		this.splitMessage();
 	}
 	
 	private void splitMessage()
@@ -34,8 +34,6 @@ public class MessageHandler implements Runnable
 		
 		String headerString = new String(headerBytes, 0, headerBytes.length).trim();
 		headerTokens = headerString.split("(?<=[\\S])[ ]+(?=[\\S])");
-		
-		System.out.println(headerString);
 		
 		parseMessage();
 	}
@@ -80,11 +78,21 @@ public class MessageHandler implements Runnable
 			
 		case "GETCHUNK":
 
-			ChunkRec.addMessage(headerTokens[3], Integer.valueOf(headerTokens[4]), body);
+			System.out.println("GETCHUNK RECEIVED");
+			byte[] read = FileManager.getChunk(headerTokens[3], Integer.valueOf(headerTokens[4]));
+			System.out.println("READ: " + read.length);
+			if(read != null)
+			{
+				Chunk chunk = new Chunk(headerTokens[3], Integer.valueOf(headerTokens[4]), 0, read);
+				byte[] buf = MessageGenerator.generateCHUNK(chunk);
+				Peer.getMDB().sendPacket(buf);
+			}
 			break;
 			
 		case "CHUNK":
-
+			
+			System.out.println("CHUNK: " + body.length);
+			ChunkRec.addMessage(headerTokens[3], Integer.valueOf(headerTokens[4]), body);
 			break;
 			
 		case "DELETE":
@@ -100,9 +108,7 @@ public class MessageHandler implements Runnable
 	@Override
 	public void run()
 	{
-		String received = new String(packet.getData(), 0, packet.getLength());
-		String[] parts = received.split(MessageGenerator.CRLF);
-
+		splitMessage();
 	}
 	
 	public static int indexOf(byte[] list, byte[] element)

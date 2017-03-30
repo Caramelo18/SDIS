@@ -45,7 +45,7 @@ public class Peer implements RMI
 		String[] addresses = {"224.1.1.1", "224.2.2.2", "224.3.3.3"};
 		int[] ports = {5000, 5001, 5002};
 		protocolVersion = "1.0";
-		serverId = 2;
+		serverId = 1;
 		serviceAccessPoint = "RMI" + serverId;
 		
 		initListeners(addresses, ports);

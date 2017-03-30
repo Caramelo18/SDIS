@@ -21,10 +21,12 @@ public class MessageGenerator
 		header += " " + chunk.getReplicationDegree();
 		header += " " + CRLF + CRLF;
 		
-		try {
+		try
+		{
 			return appendBytes(header.getBytes("ASCII"), chunk.getBody());
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
+		}
+		catch (UnsupportedEncodingException e)
+		{
 			e.printStackTrace();
 		}
 		
@@ -42,9 +44,12 @@ public class MessageGenerator
 		header += " " + chunkNo;
 		header += " " + CRLF + CRLF;
 		
-		try {
+		try
+		{
 			return header.getBytes("ASCII");
-		} catch (UnsupportedEncodingException e) {
+		}
+		catch (UnsupportedEncodingException e)
+		{
 			e.printStackTrace();
 		}
 		
@@ -62,9 +67,12 @@ public class MessageGenerator
 		header += " " + chunkNo;
 		header += " " + CRLF + CRLF;
 		
-		try {
+		try
+		{
 			return header.getBytes("ASCII");
-		} catch (UnsupportedEncodingException e) {
+		}
+		catch (UnsupportedEncodingException e)
+		{
 			e.printStackTrace();
 		}
 		
@@ -82,9 +90,12 @@ public class MessageGenerator
 		header += " " + chunk.getChunkNo();
 		header += " " + CRLF + CRLF;
 		
-		try {
+		try
+		{
 			return appendBytes(header.getBytes("ASCII"), chunk.getBody());
-		} catch (UnsupportedEncodingException e) {
+		}
+		catch (UnsupportedEncodingException e)
+		{
 			e.printStackTrace();
 		}
 		
@@ -101,9 +112,12 @@ public class MessageGenerator
 		header += " " + fileID;
 		header += " " + CRLF + CRLF;
 		
-		try {
+		try
+		{
 			return header.getBytes("ASCII");
-		} catch (UnsupportedEncodingException e) {
+		}
+		catch (UnsupportedEncodingException e)
+		{
 			e.printStackTrace();
 		}
 		
@@ -121,9 +135,12 @@ public class MessageGenerator
 		header += " " + chunk.getChunkNo();
 		header += " " + CRLF + CRLF;
 		
-		try {
+		try
+		{
 			return header.getBytes("ASCII");
-		} catch (UnsupportedEncodingException e) {
+		}
+		catch (UnsupportedEncodingException e)
+		{
 			e.printStackTrace();
 		}
 		
