@@ -2,6 +2,7 @@ package message;
 
 import java.net.DatagramPacket;
 import java.util.Arrays;
+import java.util.Random;
 
 import chunk.Chunk;
 import data.DataManager;
@@ -16,6 +17,8 @@ public class MessageHandler implements Runnable
 	private DatagramPacket packet;
 	private String[] headerTokens;
 	private byte[] body;
+	
+	private static boolean receivedChunk = false;
 	
 	public MessageHandler(DatagramPacket packet)
 	{	
@@ -77,7 +80,20 @@ public class MessageHandler implements Runnable
 			break;
 			
 		case "GETCHUNK":
-
+			Random rand = new Random();
+			
+			int waitTime = rand.nextInt(400);
+			
+			long currTime = System.currentTimeMillis();
+			
+			while(System.currentTimeMillis() - currTime < waitTime){}
+			
+			System.out.println("Waited: " + (System.currentTimeMillis() - currTime));
+			if(this.receivedChunk){
+				System.out.println("Received chunk, not sending");
+				return;
+			}
+			
 			System.out.println("GETCHUNK RECEIVED");
 			byte[] read = FileManager.getChunk(headerTokens[3], Integer.valueOf(headerTokens[4]));
 			System.out.println("READ: " + read.length);
@@ -87,10 +103,11 @@ public class MessageHandler implements Runnable
 				byte[] buf = MessageGenerator.generateCHUNK(chunk);
 				Peer.getMDB().sendPacket(buf);
 			}
+			this.receivedChunk = false;
 			break;
 			
 		case "CHUNK":
-			
+			this.receivedChunk = true;
 			System.out.println("CHUNK: " + body.length);
 			ChunkRec.addMessage(headerTokens[3], Integer.valueOf(headerTokens[4]), body);
 			break;
