@@ -43,10 +43,11 @@ public class ThreadedMulticastSocketListener implements Runnable
 		ready = true;
 		
 		// Receiving
-		byte[] buf = new byte[MAX_SIZE];
 		boolean running = true;
 		while(running)
 		{
+			byte[] buf = new byte[MAX_SIZE];
+			
 			DatagramPacket packet = new DatagramPacket(buf, buf.length);
 
 			try

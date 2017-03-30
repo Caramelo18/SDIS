@@ -29,11 +29,13 @@ public class MessageHandler implements Runnable
 		
 		int delimiterIndex = indexOf(packetData, MessageGenerator.CRLF.getBytes());
 		
-		byte[] headerBytes = Arrays.copyOfRange(packetData, 0, delimiterIndex - 1);
-		body = Arrays.copyOfRange(packetData, delimiterIndex + 2, packetData.length);
+		byte[] headerBytes = Arrays.copyOfRange(packetData, 0, delimiterIndex);
+		body = Arrays.copyOfRange(packetData, delimiterIndex + 4, packetData.length);
 		
-		String headerString = new String(headerBytes, 0, headerBytes.length);
-		headerTokens = headerString.split(" ");
+		String headerString = new String(headerBytes, 0, headerBytes.length).trim();
+		headerTokens = headerString.split("(?<=[\\S])[ ]+(?=[\\S])");
+		
+		System.out.println(headerString);
 		
 		parseMessage();
 	}
