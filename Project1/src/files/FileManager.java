@@ -79,6 +79,13 @@ public class FileManager
 		return true;
 	}
 	
+	public static void deleteChunk(String fileID, Integer chunkNo)
+	{
+		String path = "../Peer" + Peer.getServerId() + "/Chunks/" + fileID + "-"+ String.valueOf(chunkNo);
+		File f = new File(path);
+		f.delete();
+	}
+	
 	public static void restoreFile(File f, HashMap<Integer, byte[]> fileParts)
 	{
 		try {

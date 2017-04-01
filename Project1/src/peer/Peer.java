@@ -15,6 +15,7 @@ import java.rmi.server.UnicastRemoteObject;
 import data.DataManager;
 import files.FileManager;
 import protocol.Backup;
+import protocol.Delete;
 import protocol.Restore;
 import received.ChunkRec;
 import received.Stored;
@@ -45,7 +46,7 @@ public class Peer implements RMI
 		String[] addresses = {"224.1.1.1", "224.2.2.2", "224.3.3.3"};
 		int[] ports = {5000, 5001, 5002};
 		protocolVersion = "1.0";
-		serverId = 1;
+		serverId = 3;
 		serviceAccessPoint = "RMI" + serverId;
 		
 		initListeners(addresses, ports);
@@ -181,7 +182,8 @@ public class Peer implements RMI
 	@Override
 	public void delete(String filename) throws RemoteException
 	{
-		
+		String filenameWithPath = "../Peer" + Peer.getServerId() + "/Files/" + filename;
+		new Thread(new Delete(filenameWithPath)).start();
 	}
 
 	@Override

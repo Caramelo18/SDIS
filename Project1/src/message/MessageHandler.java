@@ -1,6 +1,7 @@
 package message;
 
 import java.net.DatagramPacket;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -18,7 +19,7 @@ public class MessageHandler implements Runnable
 	private String[] headerTokens;
 	private byte[] body;
 	
-	private static boolean receivedChunk = false;
+	private static volatile boolean receivedChunk = false;
 	
 	public MessageHandler(DatagramPacket packet)
 	{	
@@ -80,6 +81,7 @@ public class MessageHandler implements Runnable
 			break;
 			
 		case "GETCHUNK":
+			this.receivedChunk = false;
 			Random rand = new Random();
 			
 			int waitTime = rand.nextInt(400);
@@ -103,7 +105,6 @@ public class MessageHandler implements Runnable
 				byte[] buf = MessageGenerator.generateCHUNK(chunk);
 				Peer.getMDB().sendPacket(buf);
 			}
-			this.receivedChunk = false;
 			break;
 			
 		case "CHUNK":
@@ -113,6 +114,16 @@ public class MessageHandler implements Runnable
 			break;
 			
 		case "DELETE":
+			System.out.println("DELETE RECEIVED");
+			
+			String fileID = headerTokens[3];
+			
+			ArrayList<Integer> chunks = DM.getOwnedFileChunks(fileID);
+			
+			for(int i = 0; i < chunks.size(); i++)
+				FileManager.deleteChunk(fileID, chunks.get(i));
+			
+			Peer.getDataManager().deleteChunks(fileID);
 
 			break;
 			

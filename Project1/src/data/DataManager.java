@@ -52,6 +52,23 @@ public class DataManager implements Serializable
 		}
 	}
 	
+	public ArrayList<Integer> getOwnedFileChunks(String fileID)
+	{
+		ArrayList<Integer> chunks = new ArrayList<Integer>();
+
+		for(int i = 0; i < storedFilesData.size(); i++)
+		{
+			StoredData SD = storedFilesData.get(i);
+			if(SD.getFileId().equals(fileID))
+			{
+				if(SD.getPeers().contains(Peer.getServerId()))
+					chunks.add(SD.getChunkNo());
+			}
+		}
+		
+		return chunks;
+	}
+	
 	// BACKUP
 	
 	/*
@@ -87,6 +104,34 @@ public class DataManager implements Serializable
 		serialize();
 		
 		return 0;
+	}
+	
+	public void deleteBackedUpData(String filename, String fileID)
+	{
+		for(int i = 0; i < backedUpData.size(); i++)
+		{
+			BackedUpData data = backedUpData.get(i);
+			if(data.getFileId().equals(fileID))
+			{
+				backedUpData.remove(i);
+				break;
+			}
+		}
+		
+		serialize();
+	}
+	
+	public void deleteChunks(String fileID)
+	{
+		for(int i = 0; i < storedFilesData.size(); i++)
+		{
+			if(storedFilesData.get(i).getFileId().equals(fileID))
+			{
+				storedFilesData.remove(i);
+				i--;
+			}
+		}
+		serialize();
 	}
 	
 	public String getFileId(String filename)
