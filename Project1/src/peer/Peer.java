@@ -39,13 +39,18 @@ public class Peer implements RMI
 	// Data Manager
 	private static DataManager DM;
 	
+	// In progress
+	private static boolean inProgress;
+	
 	public static void main(String[] args)
 	{
+		inProgress = false;
+		
 		// Temporary Arguments Initialization
 		String[] addresses = {"224.1.1.1", "224.2.2.2", "224.3.3.3"};
 		int[] ports = {5000, 5001, 5002};
 		protocolVersion = "1.0";
-		serverId = 2;
+		serverId = 3;
 		serviceAccessPoint = "RMI" + serverId;
 		
 		initListeners(addresses, ports);
@@ -168,7 +173,7 @@ public class Peer implements RMI
 	public void backup(String filename, int replicationDegree) throws RemoteException
 	{
 		String filenameWithPath = "../Peer" + Peer.getServerId() + "/Files/" + filename;
-		new Thread(new Backup(filenameWithPath, replicationDegree)).start();
+		new Thread(new Backup(filenameWithPath, replicationDegree)).start();	
 	}
 
 	@Override
@@ -192,9 +197,9 @@ public class Peer implements RMI
 	}
 
 	@Override
-	public void state() throws RemoteException
+	public String state() throws RemoteException
 	{
-		
+		return this.DM.toString();
 	}
 	
 }

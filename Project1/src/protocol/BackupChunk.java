@@ -1,5 +1,7 @@
 package protocol;
 
+import java.util.ArrayList;
+
 import chunk.Chunk;
 import message.MessageGenerator;
 import peer.Peer;
@@ -21,6 +23,8 @@ public class BackupChunk implements Runnable
 		int attempts = 0;
 		int waitingTime = (int)Math.pow(2, attempts);
 		
+		ArrayList<Integer> peers = null;
+		
 		boolean running = true;
 		while(running)
 		{			
@@ -37,8 +41,11 @@ public class BackupChunk implements Runnable
 				e.printStackTrace();
 			}
 			
-			int storedCount = Stored.peerCount(chunk.getFileId(), chunk.getChunkNo());
-			if(storedCount < chunk.getReplicationDegree())
+			peers = Stored.getPeers(chunk.getFileId(), chunk.getChunkNo());
+			int peerCount = 0;
+			if(peers != null)
+				peerCount = peers.size();
+			if(peerCount < chunk.getReplicationDegree())
 			{
 				attempts++;
 				
@@ -58,6 +65,8 @@ public class BackupChunk implements Runnable
 				running = false;
 			}
 		}
+		System.out.println("Finished chunk " + chunk.getChunkNo());
+		Peer.getDataManager().addChunkPeers(chunk.getFileId(), chunk.getChunkNo(), peers);
 	}
 
 }

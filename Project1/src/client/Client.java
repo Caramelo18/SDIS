@@ -94,7 +94,8 @@ public class Client
 		case "STATE":
 			try
 			{
-				rmi.state();
+				String response = rmi.state();
+				System.out.println(response);
 			}
 			catch (RemoteException e)
 			{

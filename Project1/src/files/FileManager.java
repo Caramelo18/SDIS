@@ -73,7 +73,7 @@ public class FileManager
 			e.printStackTrace();
 		}
 		
-		DM.addStoredFilesData(fileId, chunkNo, replicationDegree);
+		DM.addStoredFilesData(fileId, chunkNo, replicationDegree, body.length);
 		
 		return true;
 	}

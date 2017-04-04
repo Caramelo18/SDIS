@@ -10,17 +10,19 @@ import peer.Peer;
 public class Backup implements Runnable
 {
 	private FileSplitter FS;
+	private int desiredReplicationDegree;
 	
 	public Backup(String filename, int replicationDegree)
 	{
 		FS = new FileSplitter(filename, replicationDegree);
+		this.desiredReplicationDegree = replicationDegree;
 	}
 
 	@Override
 	public void run()
 	{
 		DataManager DM = Peer.getDataManager();
-		int result = DM.addBackedUpData(FS.getFilename(), FS.getFileID());
+		int result = DM.addBackedUpData(FS.getFilename(), FS.getFileID(), desiredReplicationDegree);
 		
 		if(result == 1)
 		{

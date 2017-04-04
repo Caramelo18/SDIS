@@ -13,5 +13,5 @@ public interface RMI extends Remote
 
 	void reclaim(int kbytes) throws RemoteException;
 	
-	void state() throws RemoteException;
+	String state() throws RemoteException;
 }

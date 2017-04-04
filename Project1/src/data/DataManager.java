@@ -22,7 +22,7 @@ public class DataManager implements Serializable
 	
 	// STORED
 	
-	public void addStoredFilesData(String fileId, int chunkNo, int desiredReplicationDegree)
+	public void addStoredFilesData(String fileId, int chunkNo, int desiredReplicationDegree, int size)
 	{	
 		ArrayList<Integer> peers = Stored.getPeers(fileId, chunkNo);
 		if(peers == null)
@@ -31,7 +31,7 @@ public class DataManager implements Serializable
 		}
 		peers.add(Peer.getServerId());
 		
-		storedFilesData.add(new StoredData(fileId, chunkNo, desiredReplicationDegree, peers));
+		storedFilesData.add(new StoredData(fileId, chunkNo, desiredReplicationDegree, peers, size));
 		serialize();
 	}
 	
@@ -76,7 +76,7 @@ public class DataManager implements Serializable
 	Retorna 1 - filename existe com o fileId indicado
 	Retorna 2 - filename existe com outro fileId
 	*/
-	public int addBackedUpData(String filename, String fileId)
+	public int addBackedUpData(String filename, String fileId, int desiredReplicationDegree)
 	{
 		for(int i = 0; i < backedUpData.size(); i++)
 		{
@@ -101,7 +101,7 @@ public class DataManager implements Serializable
 		
 		System.out.println("FILENAME: " + filename);
 		
-		BackedUpData data = new BackedUpData(filename, fileId);
+		BackedUpData data = new BackedUpData(filename, fileId, desiredReplicationDegree);
 		backedUpData.add(data);
 		serialize();
 		
@@ -148,6 +148,19 @@ public class DataManager implements Serializable
 		return null;
 	}
 	
+	public void addChunkPeers(String fileId, int chunkNo, ArrayList<Integer> peers)
+	{
+		for(int i = 0; i < backedUpData.size(); i++)
+		{
+			BackedUpData bud = backedUpData.get(i);
+			if(bud.getFileId().equals(fileId))
+			{
+				bud.addChunkPeers(chunkNo, peers);
+			}
+		}
+		serialize();
+	}
+	
 	// SERIALIZE
 
 	public void serialize()
@@ -167,4 +180,26 @@ public class DataManager implements Serializable
 			e.printStackTrace();
 		}
 	}
+	
+	// TO STRING
+	public String toString()
+	{
+		String ret = "Received Chunks Information:  \n";
+		
+		for(int i = 0; i < storedFilesData.size(); i++)
+		{
+			if(storedFilesData.get(i) != null)
+				ret += storedFilesData.get(i).toString();
+		}
+		
+		ret += "\n\nBacked Up Data Information:  \n";
+		for(int i = 0; i < backedUpData.size(); i++)
+		{
+			if(backedUpData.get(i) != null)
+				ret += backedUpData.get(i).toString();
+		}
+		
+		return ret;
+	}
+
 }

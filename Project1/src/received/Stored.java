@@ -52,16 +52,4 @@ public class Stored
 		return peerList;
 	}
 	
-	public static int peerCount(String fileId, Integer chunkNo)
-	{
-		HashMap<Integer, ArrayList<Integer>> innerHashMap = storedMessages.get(fileId);
-		if(innerHashMap == null)
-			return 0;
-		
-		ArrayList<Integer> peerList = innerHashMap.get(chunkNo);
-		if(peerList == null)
-			return 0;
-		
-		return peerList.size();
-	}
 }
