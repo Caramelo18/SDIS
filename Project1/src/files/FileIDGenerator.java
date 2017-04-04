@@ -2,7 +2,6 @@ package files;
 
 import java.io.FileInputStream;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class FileIDGenerator {
 
@@ -19,6 +18,7 @@ public class FileIDGenerator {
 	          md.update(dataBytes, 0, nread);
 	        };
 	        byte[] mdbytes = md.digest();
+	        fis.close();
 
 
 	        StringBuffer sb = new StringBuffer();
@@ -36,12 +36,8 @@ public class FileIDGenerator {
 	
 	}	
 	
-	
 	public String getHash(){
 		return this.hash;
 	}
 	
-	public static void main(String[] args){
-		FileIDGenerator x = new FileIDGenerator("./ex1.txt");
-	}
 }

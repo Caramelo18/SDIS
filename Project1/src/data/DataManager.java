@@ -99,6 +99,8 @@ public class DataManager implements Serializable
 			}
 		}
 		
+		System.out.println("FILENAME: " + filename);
+		
 		BackedUpData data = new BackedUpData(filename, fileId);
 		backedUpData.add(data);
 		serialize();

@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -39,8 +38,10 @@ public class FileSplitter
 		fileID = fid.getHash();
 		int chunkNo = 0;
 		
-		try (BufferedInputStream bufinst = new BufferedInputStream (new FileInputStream(file)))
+		
+		try
 		{
+			BufferedInputStream bufinst = new BufferedInputStream (new FileInputStream(file));
 			int tmp = 0;
 			while ((tmp = bufinst.read(buffer)) > 0)
 			{
@@ -51,6 +52,7 @@ public class FileSplitter
 				chunkList.add(chunk);
 				chunkNo++;
 			}
+			bufinst.close();
 		}
 		catch (FileNotFoundException e)
 		{

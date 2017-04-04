@@ -1,7 +1,6 @@
 package protocol;
 
 import java.io.File;
-import java.nio.file.Files;
 
 import data.DataManager;
 import message.MessageGenerator;
@@ -18,7 +17,7 @@ public class Delete implements Runnable
 	}
 
 	@Override
-	public void run() {
+	public void run(){
 		// TODO Auto-generated method stub
 		DataManager DM = Peer.getDataManager();
 		String fileID = DM.getFileId(filename);
@@ -29,12 +28,23 @@ public class Delete implements Runnable
 			return;
 		}
 		
+		/*
 		String[] name = filename.split("/");
 		String filename = name[name.length - 1];
 		String filepath = "../Peer" + Peer.getServerId() + "/Files/" + filename;
+		*/
 		
-		File file = new File(filepath);
-		file.delete();
+		System.out.println(filename);
+		File file = new File(filename);
+		try
+		{
+			if(file.delete())
+				System.out.println("DELETED FILE");
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 
 		Peer.getDataManager().deleteBackedUpData(filename, fileID);
 		

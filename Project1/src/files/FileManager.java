@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
-import chunk.Chunk;
 import data.DataManager;
 import peer.Peer;
 
@@ -112,13 +111,17 @@ public class FileManager
 		File f = new File(filename);
 		if(f.exists())
 		{
-			try (BufferedInputStream bufinst = new BufferedInputStream (new FileInputStream(f)))
+			try
 			{
+				BufferedInputStream bufinst = new BufferedInputStream (new FileInputStream(f));
+				
 				byte[] buffer = new byte[FileSplitter.chunkSize];
 				int tmp = bufinst.read(buffer);
 				
 				byte[] body = new byte[tmp];
 				System.arraycopy(buffer, 0, body, 0, tmp);
+				
+				bufinst.close();
 				return body;
 			}
 			catch (FileNotFoundException e)
