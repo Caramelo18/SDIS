@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
 
 import data.DataManager;
@@ -135,5 +136,19 @@ public class FileManager
 		}
 		
 		return null;
+	}
+	
+	public static long getChunksSize()
+	{
+		String path = "../Peer" + Peer.getServerId() + "/" + "Chunks/";
+		File directory = new File(path);
+		long length = 0;
+		for (File file : directory.listFiles()) {
+			if (file.isFile())
+				length += file.length();
+			else
+				length += getChunksSize();
+		}
+		return length;
 	}
 }

@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import files.FileManager;
 import peer.Peer;
 import received.Stored;
 
@@ -198,6 +199,9 @@ public class DataManager implements Serializable
 			if(backedUpData.get(i) != null)
 				ret += backedUpData.get(i).toString();
 		}
+		
+		
+		ret += "\n\n" + "Total Chunks Size Saved(kbytes): " + FileManager.getChunksSize() + "\n";
 		
 		return ret;
 	}

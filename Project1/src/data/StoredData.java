@@ -45,7 +45,7 @@ public class StoredData implements Serializable
 	public String toString()
 	{
 		String ret = "File ID: " + this.fileId + "  -  " + "Chunk No " + String.valueOf(this.chunkNo) + "\n";
-		ret += "Chunk Size(bytes): " + String.valueOf(this.size) + "  -  ";
+		ret += "Chunk Size(kbytes): " + String.valueOf(this.size) + "  -  ";
 		ret += "Number of owners: " + String.valueOf(this.peers.size() + 1) + "\n";
 		
 		
