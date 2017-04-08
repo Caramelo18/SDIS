@@ -12,8 +12,8 @@ import received.Stored;
 
 public class DataManager implements Serializable
 {
-	private ArrayList<StoredData> storedFilesData;
-	private ArrayList<BackedUpData> backedUpData;
+	private volatile ArrayList<StoredData> storedFilesData;
+	private volatile ArrayList<BackedUpData> backedUpData;
 	
 	public DataManager()
 	{
@@ -25,6 +25,8 @@ public class DataManager implements Serializable
 	
 	public void addStoredFilesData(String fileId, int chunkNo, int desiredReplicationDegree, int size)
 	{	
+		System.out.println("ADDING A NEW STORED DATA WITH THE PEERS: ");
+		System.out.println("CALLING PEERS WITH THE FILE ID: " + fileId + " AND CHUNKNO: " + chunkNo);
 		ArrayList<Integer> peers = Stored.getPeers(fileId, chunkNo);
 		if(peers == null)
 		{
@@ -34,9 +36,15 @@ public class DataManager implements Serializable
 		
 		storedFilesData.add(new StoredData(fileId, chunkNo, desiredReplicationDegree, peers, size));
 		serialize();
+		
+		for(int i = 0; i < peers.size(); i++)
+		{
+			System.out.println(peers.get(i));
+		}
+		System.out.println("FINISHED");
 	}
 	
-	public void updateStoredFilesData(String fileId, int chunkNo, Integer peerId)
+	public void updateStoredFilesData(String fileId, int chunkNo, ArrayList<Integer> newPeers)
 	{
 		for(int i = 0; i < storedFilesData.size(); i++)
 		{
@@ -44,11 +52,8 @@ public class DataManager implements Serializable
 			if(SD.getFileId().equals(fileId) && SD.getChunkNo() == chunkNo)
 			{
 				ArrayList<Integer> peers = SD.getPeers();
-				if(!peers.contains(peerId))
-				{
-					peers.add(peerId);
-					serialize();
-				}
+				peers = newPeers;
+				serialize();
 			}
 		}
 	}
@@ -166,23 +171,31 @@ public class DataManager implements Serializable
 
 	public void serialize()
 	{
-		FileOutputStream fout;
-		try
+		boolean done = false;
+		while(!done)
 		{
-			fout = new FileOutputStream("../Peer" + Peer.getServerId() + "/metadata.ser");
-			ObjectOutputStream oos = new ObjectOutputStream(fout);
-			oos.writeObject(this);
+			done = true;
 			
-			oos.close();
-			fout.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
+			FileOutputStream fout;
+			try
+			{
+				fout = new FileOutputStream("../Peer" + Peer.getServerId() + "/metadata.ser");
+				ObjectOutputStream oos = new ObjectOutputStream(fout);
+				oos.writeObject(this);
+				
+				oos.close();
+				fout.close();
+			}
+			catch (Exception e)
+			{
+				System.out.println("WRITER BUSY");
+				done = false;
+			}
 		}
 	}
 	
 	// TO STRING
+	
 	public String toString()
 	{
 		String ret = "Received Chunks Information:  \n";

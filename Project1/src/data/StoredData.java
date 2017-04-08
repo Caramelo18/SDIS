@@ -3,6 +3,8 @@ package data;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import peer.Peer;
+
 public class StoredData implements Serializable
 {
 	private String fileId;
@@ -46,7 +48,17 @@ public class StoredData implements Serializable
 	{
 		String ret = "File ID: " + this.fileId + "  -  " + "Chunk No " + String.valueOf(this.chunkNo) + "\n";
 		ret += "Chunk Size(kbytes): " + String.valueOf(this.size) + "  -  ";
-		ret += "Number of owners: " + String.valueOf(this.peers.size() + 1) + "\n";
+		ret += "Number of owners: " + String.valueOf(this.peers.size() + 1);
+		
+		ret += " ( ";
+		for(int i = 0; i < this.peers.size(); i++)
+		{
+			ret += String.valueOf(this.peers.get(i)) + " ";
+		}
+
+		ret += Peer.getServerId() + " ) ";
+		
+		ret += "\n" + "\n";
 		
 		
 		

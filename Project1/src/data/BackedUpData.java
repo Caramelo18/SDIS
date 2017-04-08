@@ -56,12 +56,6 @@ public class BackedUpData implements Serializable
 			ret += "Chunk No " + String.valueOf(k) + " - " + String.valueOf(chunkPeers.get(k).size()) + " peers\n";
 		}
 		
-		/*for(int i = 0; i < chunkPeers.size(); i++)
-		{
-			if(chunkPeers.get(i) != null)
-				ret += "Chunk No " + String.valueOf(i) + " - " + String.valueOf(chunkPeers.get(i).size()) + " peers\n";
-		}*/
-		
 		return ret;	
 	}
 }

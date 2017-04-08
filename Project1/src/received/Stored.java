@@ -3,10 +3,13 @@ package received;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import data.DataManager;
+import peer.Peer;
+
 public class Stored
 {
-	private static volatile HashMap<String, HashMap<Integer, ArrayList<Integer>>> storedMessages;
 	// FileId, ChunkNo, PeerList
+	private static HashMap<String, HashMap<Integer, ArrayList<Integer>>> storedMessages;
 	
 	public static void initStored()
 	{
@@ -37,10 +40,15 @@ public class Stored
 		
 		if(!peerList.contains(peerId))
 			peerList.add(peerId);
+		
+		DataManager DM = Peer.getDataManager();
+		DM.updateStoredFilesData(fileId, chunkNo, peerList);
 	}
 	
 	public static ArrayList<Integer> getPeers(String fileId, Integer chunkNo)
 	{
+		System.out.println("INSIDE GET PEERS");
+		
 		HashMap<Integer, ArrayList<Integer>> innerHashMap = storedMessages.get(fileId);
 		if(innerHashMap == null)
 			return null;
@@ -48,6 +56,11 @@ public class Stored
 		ArrayList<Integer> peerList = innerHashMap.get(chunkNo);
 		if(peerList == null)
 			return null;
+		
+		for(int i = 0; i < peerList.size(); i++)
+		{
+			System.out.println("RETURNING THE FOLLOWING PEER: " + peerList.get(i));
+		}
 		
 		return peerList;
 	}

@@ -41,6 +41,7 @@ public class BackupChunk implements Runnable
 				e.printStackTrace();
 			}
 			
+			System.out.println("CALLING PEERS WITH THE FILE ID: " + chunk.getFileId() + " AND CHUNKNO: " + chunk.getChunkNo());
 			peers = Stored.getPeers(chunk.getFileId(), chunk.getChunkNo());
 			int peerCount = 0;
 			if(peers != null)

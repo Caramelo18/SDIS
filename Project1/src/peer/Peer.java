@@ -37,20 +37,15 @@ public class Peer implements RMI
 	private static SenderSocket SS;
 	
 	// Data Manager
-	private static DataManager DM;
-	
-	// In progress
-	private static boolean inProgress;
+	private volatile static DataManager DM;
 	
 	public static void main(String[] args)
 	{
-		inProgress = false;
-		
 		// Temporary Arguments Initialization
 		String[] addresses = {"224.1.1.1", "224.2.2.2", "224.3.3.3"};
 		int[] ports = {5000, 5001, 5002};
 		protocolVersion = "1.0";
-		serverId = 1;
+		serverId = 4;
 		serviceAccessPoint = "RMI" + serverId;
 		
 		initListeners(addresses, ports);
@@ -199,7 +194,8 @@ public class Peer implements RMI
 	@Override
 	public String state() throws RemoteException
 	{
-		return this.DM.toString();
+		System.out.println("CALLED STATE");
+		return DM.toString();
 	}
 	
 }

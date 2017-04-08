@@ -12,6 +12,11 @@ public class ChunkRec
 		chunkMessages = new HashMap<String, HashMap<Integer, byte[]>>();
 	}
 	
+	public static void resetFile(String fileId)
+	{
+		chunkMessages.remove(fileId);
+	}
+	
 	public static void addMessage(String filename, Integer chunkNo, byte[] buf)
 	{
 		HashMap<Integer, byte[]> innerHashMap = chunkMessages.get(filename);

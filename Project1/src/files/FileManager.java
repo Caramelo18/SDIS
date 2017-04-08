@@ -74,6 +74,7 @@ public class FileManager
 			e.printStackTrace();
 		}
 		
+		System.out.println("STORED A NEW FILE");
 		DM.addStoredFilesData(fileId, chunkNo, replicationDegree, body.length);
 		
 		return true;

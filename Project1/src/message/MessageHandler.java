@@ -42,7 +42,7 @@ public class MessageHandler implements Runnable
 		parseMessage();
 	}
 	
-	private void parseMessage()
+	private synchronized void parseMessage()
 	{
 		if(Integer.valueOf(headerTokens[2]) == Peer.getServerId()){
 			// System.out.println("Receiving packets from self");
@@ -108,8 +108,8 @@ public class MessageHandler implements Runnable
 			break;
 			
 		case "CHUNK":
+			
 			this.receivedChunk = true;
-			System.out.println("CHUNK: " + body.length);
 			ChunkRec.addMessage(headerTokens[3], Integer.valueOf(headerTokens[4]), body);
 			break;
 			
@@ -139,7 +139,7 @@ public class MessageHandler implements Runnable
 		splitMessage();
 	}
 	
-	public static int indexOf(byte[] list, byte[] element)
+	public synchronized static int indexOf(byte[] list, byte[] element)
 	{
 	    for(int i = 0; i < list.length - element.length + 1; ++i)
 	    {
