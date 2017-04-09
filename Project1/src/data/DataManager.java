@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import files.FileManager;
+import message.MessageGenerator;
 import peer.Peer;
 import received.Stored;
 
@@ -25,26 +26,22 @@ public class DataManager implements Serializable
 	
 	public void addStoredFilesData(String fileId, int chunkNo, int desiredReplicationDegree, int size)
 	{	
-		System.out.println("ADDING A NEW STORED DATA WITH THE PEERS: ");
-		System.out.println("CALLING PEERS WITH THE FILE ID: " + fileId + " AND CHUNKNO: " + chunkNo);
 		ArrayList<Integer> peers = Stored.getPeers(fileId, chunkNo);
 		if(peers == null)
 		{
 			peers = new ArrayList<Integer>();
 		}
-		peers.add(Peer.getServerId());
+		
+		if(!peers.contains(Peer.getServerId()))
+			peers.add(Peer.getServerId());
+		
+		// peers = Stored.getPeers(fileId, chunkNo);
 		
 		storedFilesData.add(new StoredData(fileId, chunkNo, desiredReplicationDegree, peers, size));
 		serialize();
-		
-		for(int i = 0; i < peers.size(); i++)
-		{
-			System.out.println(peers.get(i));
-		}
-		System.out.println("FINISHED");
 	}
 	
-	public void updateStoredFilesData(String fileId, int chunkNo, ArrayList<Integer> newPeers)
+	public void updateStoredFilesData(String fileId, int chunkNo, int peerId)
 	{
 		for(int i = 0; i < storedFilesData.size(); i++)
 		{
@@ -52,10 +49,11 @@ public class DataManager implements Serializable
 			if(SD.getFileId().equals(fileId) && SD.getChunkNo() == chunkNo)
 			{
 				ArrayList<Integer> peers = SD.getPeers();
-				peers = newPeers;
-				serialize();
+				if(!peers.contains(peerId))
+					peers.add(peerId);
 			}
 		}
+		serialize();
 	}
 	
 	public ArrayList<Integer> getOwnedFileChunks(String fileID)
@@ -82,8 +80,9 @@ public class DataManager implements Serializable
 	Retorna 1 - filename existe com o fileId indicado
 	Retorna 2 - filename existe com outro fileId
 	*/
-	public int addBackedUpData(String filename, String fileId, int desiredReplicationDegree)
+	public boolean addBackedUpData(String filename, String fileId, int desiredReplicationDegree)
 	{
+		boolean modified = false;
 		for(int i = 0; i < backedUpData.size(); i++)
 		{
 			BackedUpData data = backedUpData.get(i);
@@ -92,26 +91,31 @@ public class DataManager implements Serializable
 			{
 				if(data.getFileId().equals(fileId))
 				{
-					return 1;
+					return false;
 				}
 				else
 				{
-					// TODO
-					// Chama o delete para o file antigo
-					// Actualiza os registos e os metadados
+					for(int j = 0; j < 3; j++)
+					{
+						byte[] message = MessageGenerator.generateDELETE(data.getFileId());
+						Peer.getMC().sendPacket(message);
+					}
 					
-					return 2;
+					data.setFileId(fileId);
+					modified = true;
 				}
 			}
 		}
 		
-		System.out.println("FILENAME: " + filename);
+		if(!modified)
+		{
+			BackedUpData data = new BackedUpData(filename, fileId, desiredReplicationDegree);
+			backedUpData.add(data);
+		}
 		
-		BackedUpData data = new BackedUpData(filename, fileId, desiredReplicationDegree);
-		backedUpData.add(data);
 		serialize();
 		
-		return 0;
+		return true;
 	}
 	
 	public void deleteBackedUpData(String filename, String fileID)
@@ -171,11 +175,9 @@ public class DataManager implements Serializable
 
 	public void serialize()
 	{
-		boolean done = false;
-		while(!done)
-		{
-			done = true;
-			
+		int tries = 0;
+		while(tries < 5)
+		{	
 			FileOutputStream fout;
 			try
 			{
@@ -185,11 +187,11 @@ public class DataManager implements Serializable
 				
 				oos.close();
 				fout.close();
+				tries = 5;
 			}
 			catch (Exception e)
 			{
-				System.out.println("WRITER BUSY");
-				done = false;
+				tries++;
 			}
 		}
 	}

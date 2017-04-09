@@ -39,6 +39,9 @@ public class Peer implements RMI
 	// Data Manager
 	private volatile static DataManager DM;
 	
+	// Disk Space
+	private static double diskSpace = 1024;
+	
 	public static void main(String[] args)
 	{
 		// Temporary Arguments Initialization
@@ -188,13 +191,18 @@ public class Peer implements RMI
 	@Override
 	public void reclaim(int kbytes) throws RemoteException
 	{
-		
+		diskSpace = kbytes;
+		if(FileManager.getChunksSize() > diskSpace)
+		{
+			// TODO
+			double toReclaim = FileManager.getChunksSize() - diskSpace;
+			
+		}
 	}
 
 	@Override
 	public String state() throws RemoteException
 	{
-		System.out.println("CALLED STATE");
 		return DM.toString();
 	}
 	

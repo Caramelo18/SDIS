@@ -48,7 +48,7 @@ public class StoredData implements Serializable
 	{
 		String ret = "File ID: " + this.fileId + "  -  " + "Chunk No " + String.valueOf(this.chunkNo) + "\n";
 		ret += "Chunk Size(kbytes): " + String.valueOf(this.size) + "  -  ";
-		ret += "Number of owners: " + String.valueOf(this.peers.size() + 1);
+		ret += "Number of owners: " + String.valueOf(this.peers.size());
 		
 		ret += " ( ";
 		for(int i = 0; i < this.peers.size(); i++)
@@ -56,11 +56,11 @@ public class StoredData implements Serializable
 			ret += String.valueOf(this.peers.get(i)) + " ";
 		}
 
-		ret += Peer.getServerId() + " ) ";
+		ret += ") " + "\n";
+		
+		ret += "Desired Replication Degree: " + desiredReplicationDegree;
 		
 		ret += "\n" + "\n";
-		
-		
 		
 		return ret;
 	}

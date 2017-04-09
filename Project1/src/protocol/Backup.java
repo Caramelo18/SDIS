@@ -1,5 +1,6 @@
 package protocol;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import chunk.Chunk;
@@ -22,20 +23,11 @@ public class Backup implements Runnable
 	public void run()
 	{
 		DataManager DM = Peer.getDataManager();
-		int result = DM.addBackedUpData(FS.getFilename(), FS.getFileID(), desiredReplicationDegree);
+		boolean success = DM.addBackedUpData(FS.getFilename(), FS.getFileID(), desiredReplicationDegree);
 		
-		if(result == 1)
+		if(!success)
 		{
 			System.out.println("File already backed up");
-			return;
-		}
-		
-		if(result == 2)
-		{
-			System.out.println("A different file with the same filename is backed up");
-			
-			// TODO
-			
 			return;
 		}
 		

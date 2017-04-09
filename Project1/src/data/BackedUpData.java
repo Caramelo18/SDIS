@@ -34,6 +34,11 @@ public class BackedUpData implements Serializable
 		return desiredReplicationDegree;
 	}
 	
+	public void setFileId(String newFileId)
+	{
+		fileId = newFileId;
+	}
+	
 	public void updateVersion(String fileId, int desiredReplicationDegree)
 	{
 		this.fileId = fileId;

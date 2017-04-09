@@ -17,13 +17,16 @@ public class ChunkRec
 		chunkMessages.remove(fileId);
 	}
 	
-	public static void addMessage(String filename, Integer chunkNo, byte[] buf)
+	public static void addMessage(String fileId, Integer chunkNo, byte[] buf)
 	{
-		HashMap<Integer, byte[]> innerHashMap = chunkMessages.get(filename);
+		// TODO
+		// Apenas de o fileId de um ficheiro dele
+		
+		HashMap<Integer, byte[]> innerHashMap = chunkMessages.get(fileId);
 		if(innerHashMap == null)
 		{
 			innerHashMap = new HashMap<Integer, byte[]>();
-			chunkMessages.put(filename, innerHashMap);
+			chunkMessages.put(fileId, innerHashMap);
 		}
 		innerHashMap.put(chunkNo, buf);
 	}

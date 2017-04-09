@@ -17,7 +17,8 @@ public class Delete implements Runnable
 	}
 
 	@Override
-	public void run(){
+	public void run()
+	{
 		// TODO Auto-generated method stub
 		DataManager DM = Peer.getDataManager();
 		String fileID = DM.getFileId(filename);
@@ -27,12 +28,6 @@ public class Delete implements Runnable
 			System.out.println("No such file backed up");
 			return;
 		}
-		
-		/*
-		String[] name = filename.split("/");
-		String filename = name[name.length - 1];
-		String filepath = "../Peer" + Peer.getServerId() + "/Files/" + filename;
-		*/
 		
 		System.out.println(filename);
 		File file = new File(filename);
@@ -48,8 +43,11 @@ public class Delete implements Runnable
 
 		Peer.getDataManager().deleteBackedUpData(filename, fileID);
 		
-		byte[] message = MessageGenerator.generateDELETE(fileID);
-		Peer.getMC().sendPacket(message);
+		for(int i = 0; i < 3; i++)
+		{
+			byte[] message = MessageGenerator.generateDELETE(fileID);
+			Peer.getMC().sendPacket(message);
+		}
 	}
 	
 }

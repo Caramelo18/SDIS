@@ -42,13 +42,11 @@ public class Stored
 			peerList.add(peerId);
 		
 		DataManager DM = Peer.getDataManager();
-		DM.updateStoredFilesData(fileId, chunkNo, peerList);
+		DM.updateStoredFilesData(fileId, chunkNo, peerId);
 	}
 	
 	public static ArrayList<Integer> getPeers(String fileId, Integer chunkNo)
 	{
-		System.out.println("INSIDE GET PEERS");
-		
 		HashMap<Integer, ArrayList<Integer>> innerHashMap = storedMessages.get(fileId);
 		if(innerHashMap == null)
 			return null;
@@ -57,10 +55,12 @@ public class Stored
 		if(peerList == null)
 			return null;
 		
+		/*
 		for(int i = 0; i < peerList.size(); i++)
 		{
 			System.out.println("RETURNING THE FOLLOWING PEER: " + peerList.get(i));
 		}
+		*/
 		
 		return peerList;
 	}

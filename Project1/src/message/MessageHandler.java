@@ -21,6 +21,9 @@ public class MessageHandler implements Runnable
 	
 	private static volatile boolean receivedChunk = false;
 	
+	// TODO
+	private static volatile ArrayList<String> receivedChunk;
+	
 	public MessageHandler(DatagramPacket packet)
 	{	
 		this.packet = packet;	
@@ -91,14 +94,14 @@ public class MessageHandler implements Runnable
 			while(System.currentTimeMillis() - currTime < waitTime){}
 			
 			System.out.println("Waited: " + (System.currentTimeMillis() - currTime));
-			if(this.receivedChunk){
+			if(this.receivedChunk)
+			{
 				System.out.println("Received chunk, not sending");
 				return;
 			}
 			
-			System.out.println("GETCHUNK RECEIVED");
 			byte[] read = FileManager.getChunk(headerTokens[3], Integer.valueOf(headerTokens[4]));
-			System.out.println("READ: " + read.length);
+			
 			if(read != null)
 			{
 				Chunk chunk = new Chunk(headerTokens[3], Integer.valueOf(headerTokens[4]), 0, read);

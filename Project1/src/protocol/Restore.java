@@ -87,6 +87,7 @@ public class Restore implements Runnable
 		
 		System.out.println(fileParts.size());
 		
+		ChunkRec.resetFile(fileId);
 		FileManager.restoreFile(f, fileParts);
 	}
 }
