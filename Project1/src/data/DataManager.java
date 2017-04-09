@@ -1,7 +1,6 @@
 package data;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,6 +19,11 @@ public class DataManager implements Serializable
 	{
 		storedFilesData = new ArrayList<StoredData>();
 		backedUpData = new ArrayList<BackedUpData>();
+	}
+	
+	public ArrayList<StoredData> getStoredData()
+	{
+		return storedFilesData;
 	}
 	
 	// STORED
@@ -56,22 +60,39 @@ public class DataManager implements Serializable
 		serialize();
 	}
 	
-	public ArrayList<Integer> getOwnedFileChunks(String fileID)
+	public ArrayList<Integer> getOwnedFileChunks(String fileId)
 	{
 		ArrayList<Integer> chunks = new ArrayList<Integer>();
 
 		for(int i = 0; i < storedFilesData.size(); i++)
 		{
 			StoredData SD = storedFilesData.get(i);
-			if(SD.getFileId().equals(fileID))
+			if(SD.getFileId().equals(fileId))
 			{
 				if(SD.getPeers().contains(Peer.getServerId()))
 					chunks.add(SD.getChunkNo());
 			}
 		}
-		
 		return chunks;
 	}
+	
+	public void removeStoredChunk(String fileId, int chunkNo, int peerId)
+	{
+		for(int i = 0; i < storedFilesData.size(); i++)
+		{
+			StoredData SD = storedFilesData.get(i);
+			if(SD.getFileId().equals(fileId) && SD.getChunkNo() == chunkNo)
+			{
+				ArrayList<Integer> peers = SD.getPeers();
+				for(int j = 0; j < peers.size(); j++)
+				{
+					if(peers.get(j) == peerId)
+						peers.remove(j);
+				}
+			}
+		}
+	}
+	
 	
 	// BACKUP
 	
@@ -100,7 +121,7 @@ public class DataManager implements Serializable
 						byte[] message = MessageGenerator.generateDELETE(data.getFileId());
 						Peer.getMC().sendPacket(message);
 					}
-					
+					Stored.resetFile(data.getFileId());
 					data.setFileId(fileId);
 					modified = true;
 				}
@@ -216,7 +237,7 @@ public class DataManager implements Serializable
 		}
 		
 		
-		ret += "\n\n" + "Total Chunks Size Saved(kbytes): " + FileManager.getChunksSize() + "\n";
+		ret += "\n\n" + "Total Chunks Size Saved(bytes): " + FileManager.getChunksSize() + "\n";
 		
 		return ret;
 	}

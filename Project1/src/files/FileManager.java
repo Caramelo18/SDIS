@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.HashMap;
 
 import data.DataManager;
@@ -60,8 +59,13 @@ public class FileManager
 			return true;
 		}
 		
-		// TODO
-		// Falta ver aqui se existe espaço, pois caso não exista retorna false
+		//TODO
+		// ver se já tem o rep degree desejado
+		
+		if(Peer.getDiskSpaceBytes() <= FileManager.getChunksSize() + body.length){
+			System.out.println("Not enough space to store chunk");
+			return false;
+		}
 		
 		try
 		{

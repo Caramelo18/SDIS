@@ -15,6 +15,7 @@ import data.DataManager;
 import files.FileManager;
 import protocol.Backup;
 import protocol.Delete;
+import protocol.Reclaim;
 import protocol.Restore;
 import received.ChunkRec;
 import received.Stored;
@@ -40,7 +41,7 @@ public class Peer implements RMI
 	private volatile static DataManager DM;
 	
 	// Disk Space
-	private static double diskSpace = 1024;
+	private static long diskSpaceBytes = 1000;
 	
 	public static void main(String[] args)
 	{
@@ -48,7 +49,7 @@ public class Peer implements RMI
 		String[] addresses = {"224.1.1.1", "224.2.2.2", "224.3.3.3"};
 		int[] ports = {5000, 5001, 5002};
 		protocolVersion = "1.0";
-		serverId = 4;
+		serverId = 3;
 		serviceAccessPoint = "RMI" + serverId;
 		
 		initListeners(addresses, ports);
@@ -164,12 +165,20 @@ public class Peer implements RMI
 	{
 		return DM;
 	}
+	
+	public static long getDiskSpaceBytes()
+	{
+		return diskSpaceBytes;
+	}
 
 	// OTHER METHODS
 	
 	@Override
 	public void backup(String filename, int replicationDegree) throws RemoteException
 	{
+		if(replicationDegree < 1 || replicationDegree > 9)
+			System.out.println("Replication degree must be between 1 and 9");
+		
 		String filenameWithPath = "../Peer" + Peer.getServerId() + "/Files/" + filename;
 		new Thread(new Backup(filenameWithPath, replicationDegree)).start();	
 	}
@@ -191,12 +200,12 @@ public class Peer implements RMI
 	@Override
 	public void reclaim(int kbytes) throws RemoteException
 	{
-		diskSpace = kbytes;
-		if(FileManager.getChunksSize() > diskSpace)
+		diskSpaceBytes = kbytes * 1000;
+		if(FileManager.getChunksSize() > diskSpaceBytes)
 		{
 			// TODO
-			double toReclaim = FileManager.getChunksSize() - diskSpace;
-			
+			long toReclaim = FileManager.getChunksSize() - diskSpaceBytes;
+			new Thread(new Reclaim(toReclaim, this.getDataManager().getStoredData())).start();
 		}
 	}
 

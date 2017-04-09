@@ -18,15 +18,12 @@ public class MessageHandler implements Runnable
 	private DatagramPacket packet;
 	private String[] headerTokens;
 	private byte[] body;
-	
-	private static volatile boolean receivedChunk = false;
-	
-	// TODO
-	private static volatile ArrayList<String> receivedChunk;
+		
+	private static volatile ArrayList<String> receivedChunks = new ArrayList<String>();;
 	
 	public MessageHandler(DatagramPacket packet)
 	{	
-		this.packet = packet;	
+		this.packet = packet;
 	}
 	
 	private void splitMessage()
@@ -84,7 +81,8 @@ public class MessageHandler implements Runnable
 			break;
 			
 		case "GETCHUNK":
-			this.receivedChunk = false;
+			String chunkF = headerTokens[3] + "-" + headerTokens[4];
+
 			Random rand = new Random();
 			
 			int waitTime = rand.nextInt(400);
@@ -94,7 +92,7 @@ public class MessageHandler implements Runnable
 			while(System.currentTimeMillis() - currTime < waitTime){}
 			
 			System.out.println("Waited: " + (System.currentTimeMillis() - currTime));
-			if(this.receivedChunk)
+			if(receivedChunks.contains(chunkF))
 			{
 				System.out.println("Received chunk, not sending");
 				return;
@@ -111,8 +109,12 @@ public class MessageHandler implements Runnable
 			break;
 			
 		case "CHUNK":
+			String chunk = headerTokens[3] + "-" + headerTokens[4];
+			if(!receivedChunks.contains(chunk)){
+				receivedChunks.add(chunk);
+				System.out.println("Received chunk " + chunk);
+			}
 			
-			this.receivedChunk = true;
 			ChunkRec.addMessage(headerTokens[3], Integer.valueOf(headerTokens[4]), body);
 			break;
 			

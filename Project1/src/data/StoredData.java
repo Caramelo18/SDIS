@@ -3,9 +3,8 @@ package data;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import peer.Peer;
 
-public class StoredData implements Serializable
+public class StoredData implements Serializable, Comparable<StoredData>
 {
 	private String fileId;
 	private int chunkNo;
@@ -44,6 +43,11 @@ public class StoredData implements Serializable
 		return peers;
 	}
 	
+	public int getSize()
+	{
+		return size;
+	}
+	
 	public String toString()
 	{
 		String ret = "File ID: " + this.fileId + "  -  " + "Chunk No " + String.valueOf(this.chunkNo) + "\n";
@@ -63,5 +67,16 @@ public class StoredData implements Serializable
 		ret += "\n" + "\n";
 		
 		return ret;
+	}
+
+	@Override
+	public int compareTo(StoredData o) {
+		int aboveRep = this.peers.size() - this.desiredReplicationDegree;
+		int aboveRep2 = o.peers.size() - o.desiredReplicationDegree;
+		
+		if(aboveRep == aboveRep2)
+			return o.size - this.size;
+		
+		return aboveRep2 - aboveRep;
 	}
 }

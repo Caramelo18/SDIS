@@ -126,13 +126,13 @@ public class MessageGenerator
 		// MC
 	}
 
-	public synchronized static byte[] generateREMOVED(Chunk chunk)
+	public synchronized static byte[] generateREMOVED(String fileId, String chunkNo)
 	{
 		String header = "REMOVED";
 		header += " " + Peer.getProtocolVersion();
 		header += " " + Peer.getServerId();
-		header += " " + chunk.getFileId();
-		header += " " + chunk.getChunkNo();
+		header += " " + fileId;
+		header += " " + chunkNo;
 		header += " " + CRLF + CRLF;
 		
 		try

@@ -65,6 +65,10 @@ public class BackupChunk implements Runnable
 				running = false;
 			}
 		}
+		if(peers == null)
+			peers = new ArrayList<Integer>();
+		
+		
 		System.out.println("Finished chunk " + chunk.getChunkNo());
 		Peer.getDataManager().addChunkPeers(chunk.getFileId(), chunk.getChunkNo(), peers);
 	}

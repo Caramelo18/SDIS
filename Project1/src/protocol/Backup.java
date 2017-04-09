@@ -1,12 +1,12 @@
 package protocol;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import chunk.Chunk;
 import data.DataManager;
 import files.FileSplitter;
 import peer.Peer;
+import received.Stored;
 
 public class Backup implements Runnable
 {
@@ -30,6 +30,7 @@ public class Backup implements Runnable
 			System.out.println("File already backed up");
 			return;
 		}
+		Stored.resetFile(FS.getFileID());
 		
 		ArrayList<Chunk> chunks = FS.getChunkList();
 		
