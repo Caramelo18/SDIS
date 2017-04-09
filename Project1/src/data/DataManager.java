@@ -39,8 +39,6 @@ public class DataManager implements Serializable
 		if(!peers.contains(Peer.getServerId()))
 			peers.add(Peer.getServerId());
 		
-		// peers = Stored.getPeers(fileId, chunkNo);
-		
 		storedFilesData.add(new StoredData(fileId, chunkNo, desiredReplicationDegree, peers, size));
 		serialize();
 	}
@@ -50,6 +48,11 @@ public class DataManager implements Serializable
 		for(int i = 0; i < storedFilesData.size(); i++)
 		{
 			StoredData SD = storedFilesData.get(i);
+			if(SD == null || SD.getFileId() == null)
+			{
+				continue;
+			}
+			
 			if(SD.getFileId().equals(fileId) && SD.getChunkNo() == chunkNo)
 			{
 				ArrayList<Integer> peers = SD.getPeers();
@@ -92,7 +95,6 @@ public class DataManager implements Serializable
 			}
 		}
 	}
-	
 	
 	// BACKUP
 	

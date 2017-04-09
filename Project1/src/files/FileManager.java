@@ -6,10 +6,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import data.DataManager;
 import peer.Peer;
+import received.Stored;
 
 public class FileManager
 {
@@ -59,10 +61,28 @@ public class FileManager
 			return true;
 		}
 		
-		//TODO
-		// ver se já tem o rep degree desejado
+		if(Peer.getProtocolVersion().equals("2.0"))
+		{
+			ArrayList<Integer> peers = Stored.getPeers(fileId, chunkNo);
+			int peerCount = 0;
+			if(peers != null)
+			{
+				System.out.println("Peers was null");
+				peerCount = peers.size();
+			}
+			
+			System.out.println("PEER COUNT AT: " + peerCount);
+			System.out.println("REPLICATION DEGREE IS: " + replicationDegree);
+			
+			if(peerCount >= replicationDegree)
+			{
+				System.out.println("Already reached desired replication degree");
+				return false;
+			}
+		}
 		
-		if(Peer.getDiskSpaceBytes() <= FileManager.getChunksSize() + body.length){
+		if(Peer.getDiskSpaceBytes() <= FileManager.getChunksSize() + body.length)
+		{
 			System.out.println("Not enough space to store chunk");
 			return false;
 		}

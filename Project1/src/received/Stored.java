@@ -55,13 +55,6 @@ public class Stored
 		if(peerList == null)
 			return null;
 		
-		/*
-		for(int i = 0; i < peerList.size(); i++)
-		{
-			System.out.println("RETURNING THE FOLLOWING PEER: " + peerList.get(i));
-		}
-		*/
-		
 		return peerList;
 	}
 	

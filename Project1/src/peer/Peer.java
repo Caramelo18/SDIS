@@ -41,15 +41,15 @@ public class Peer implements RMI
 	private volatile static DataManager DM;
 	
 	// Disk Space
-	private static long diskSpaceBytes = 1000;
+	private static long diskSpaceBytes = 1 * 1000 * 1000 * 1000; // 1 GB
 	
 	public static void main(String[] args)
 	{
 		// Temporary Arguments Initialization
 		String[] addresses = {"224.1.1.1", "224.2.2.2", "224.3.3.3"};
 		int[] ports = {5000, 5001, 5002};
-		protocolVersion = "1.0";
-		serverId = 3;
+		protocolVersion = "2.0";
+		serverId = 6;
 		serviceAccessPoint = "RMI" + serverId;
 		
 		initListeners(addresses, ports);
