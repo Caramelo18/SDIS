@@ -33,6 +33,10 @@ public class MessageHandler implements Runnable
 		this.packet = packet;
 	}
 	
+	public static ArrayList<String> getReceivedChunks()
+	{
+		return receivedChunks;
+	}
 	private void splitMessage()
 	{
 		byte[] packetData = new byte[packet.getLength()];
@@ -174,7 +178,7 @@ public class MessageHandler implements Runnable
 				return;
 			
 			int desiredReplicationDegree = Peer.getDataManager().getDesiredReplicationDegree(fileId);
-			recoverReplicationDegree(fileId, chunkNo, desiredReplicationDegree);
+			Peer.recoverChunkReplicationDegree(fileId, chunkNo, desiredReplicationDegree);
 
 			break;
 			
@@ -234,53 +238,5 @@ public class MessageHandler implements Runnable
 	   return -1;  
 	} 
 	
-	private void recoverReplicationDegree(String fileId, int chunkNo, int replicationDegree)
-	{
-		Random r = new Random();
-		int waitTime1 = r.nextInt(400);
-		
-		try
-		{
-			Thread.sleep(waitTime1);
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-		
-		String chunkName = fileId + "-" + String.valueOf(chunkNo);
-		if(receivedChunks.contains(chunkName))
-		{
-			System.out.println("Received chunk, not sending");
-			return;
-		}
-		
-		String path = "../Peer" + Peer.getServerId() + "/Chunks/" + chunkName;
-		File file = new File(path);
-		
-		if(!file.exists())
-			return;
-		
-		BufferedInputStream bufinst = null;
-		try {
-			bufinst = new BufferedInputStream (new FileInputStream(file));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
-		byte[] body = new byte[FileSplitter.chunkSize];
-		try {
-			bufinst.read(body);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		Chunk chunk = new Chunk(fileId, chunkNo, replicationDegree, body);
-		
-		Thread thread = new Thread(new BackupChunk(chunk));
-		thread.start();
-				
-	}
 }

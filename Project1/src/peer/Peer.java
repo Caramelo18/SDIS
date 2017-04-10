@@ -1,7 +1,9 @@
 package peer;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.InetAddress;
@@ -11,12 +13,17 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Random;
 
+import chunk.Chunk;
 import data.DataManager;
 import data.StoredData;
 import files.FileManager;
+import files.FileSplitter;
 import message.MessageGenerator;
+import message.MessageHandler;
 import protocol.Backup;
+import protocol.BackupChunk;
 import protocol.Delete;
 import protocol.Reclaim;
 import protocol.Restore;
@@ -269,6 +276,67 @@ public class Peer implements RMI
 		{
 			byte[] message = MessageGenerator.generateCHECKDELETED(ownedFiles.get(i));
 			Peer.getMC().sendPacket(message);
+		}
+	}
+	
+	public static void recoverChunkReplicationDegree(String fileId, int chunkNo, int replicationDegree)
+	{
+		Random r = new Random();
+		int waitTime1 = r.nextInt(400);
+		
+		try
+		{
+			Thread.sleep(waitTime1);
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+		
+		String chunkName = fileId + "-" + String.valueOf(chunkNo);
+		if(MessageHandler.getReceivedChunks().contains(chunkName))
+		{
+			System.out.println("Received chunk, not sending");
+			return;
+		}
+		
+		String path = "../Peer" + Peer.getServerId() + "/Chunks/" + chunkName;
+		File file = new File(path);
+		
+		if(!file.exists())
+			return;
+		
+		BufferedInputStream bufinst = null;
+		try {
+			bufinst = new BufferedInputStream (new FileInputStream(file));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		byte[] body = new byte[FileSplitter.chunkSize];
+		try {
+			bufinst.read(body);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Chunk chunk = new Chunk(fileId, chunkNo, replicationDegree, body);
+		
+		Thread thread = new Thread(new BackupChunk(chunk));
+		thread.start();
+				
+	}
+	
+	private void recoverReplicationDegree()
+	{
+		ArrayList<StoredData> ownedChunks = Peer.getDataManager().getStoredData();
+		for(int i = 0; i < ownedChunks.size(); i++)
+		{
+			StoredData actual = ownedChunks.get(i);
+			if(actual.getDesiredReplicationDegree() < actual.getPeers().size())
+				recoverChunkReplicationDegree(actual.getFileId(), actual.getChunkNo(), actual.getDesiredReplicationDegree());
 		}
 	}
 }
