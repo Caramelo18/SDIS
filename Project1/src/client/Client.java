@@ -37,15 +37,17 @@ public class Client
 	
 	public static void executeCommand(RMI rmi)
 	{
-		if(Integer.valueOf(operands.get(1)) < 1 || Integer.valueOf(operands.get(1)) > 9)
-		{
-			System.out.println("Replication degree must be between 1 and 9");
-			return;
-		}
 		
 		switch(operation)
 		{
 		case "BACKUP":
+			
+			if(Integer.valueOf(operands.get(1)) < 1 || Integer.valueOf(operands.get(1)) > 9)
+			{
+				System.out.println("Replication degree must be between 1 and 9");
+				return;
+			}
+			
 			try
 			{
 				rmi.backup(operands.get(0), Integer.parseInt(operands.get(1)));
