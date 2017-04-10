@@ -16,6 +16,7 @@ import files.FileManager;
 import files.FileSplitter;
 import peer.Peer;
 import protocol.BackupChunk;
+import socket.PrivateSenderSocket;
 import received.ChunkRec;
 import received.Stored;
 import socket.SenderSocket;
@@ -61,7 +62,7 @@ public class MessageHandler implements Runnable
 		}
 		else if(peerHasLowerVersion(Peer.getProtocolVersion(), headerTokens[1]))
 		{
-			System.out.println("Lower protocol version");
+			//System.out.println("Lower protocol version");
 			return;
 		}
 		
@@ -122,11 +123,30 @@ public class MessageHandler implements Runnable
 			
 			if(receivedChunks.contains(chunkF))
 			{
-				System.out.println("Received chunk, not sending");
+				//System.out.println("Received chunk, not sending");
 				return;
 			}
 			
 			byte[] read = FileManager.getChunk(headerTokens[3], Integer.valueOf(headerTokens[4]));
+			
+			if(headerTokens[1].equals("2.0") && read != null)
+			{
+				String address = headerTokens[5];
+				String port = headerTokens[6];
+				PrivateSenderSocket ss = new PrivateSenderSocket();
+				
+				Chunk chunk = new Chunk(headerTokens[3], Integer.valueOf(headerTokens[4]), 0, read);
+				byte[] buf = MessageGenerator.generateCHUNK(chunk);
+				ss.sendMessage(address, Integer.valueOf(port), buf);
+				
+				byte[] emptyMsg = new byte[1];
+				Chunk emptyChunk = new Chunk(headerTokens[3], Integer.valueOf(headerTokens[4]), 0, emptyMsg);
+				byte[] emptyBuf = MessageGenerator.generateCHUNK(emptyChunk);
+				Peer.getMDB().sendPacket(emptyBuf);
+				
+				return;
+			}
+			
 			
 			if(read != null)
 			{
@@ -138,11 +158,14 @@ public class MessageHandler implements Runnable
 			
 		case "CHUNK":
 			String chunk = headerTokens[3] + "-" + headerTokens[4];
-			
+				
 			if(!receivedChunks.contains(chunk)){
 				receivedChunks.add(chunk);
-				System.out.println("Received chunk " + chunk);
+				//System.out.println("Received chunk " + chunk);
 			}
+			
+			if(body.length == 1 && Peer.getProtocolVersion().equals("2.0"))
+				return;
 			
 			ChunkRec.addMessage(headerTokens[3], Integer.valueOf(headerTokens[4]), body);
 			break;
@@ -152,7 +175,7 @@ public class MessageHandler implements Runnable
 			
 			String fileID = headerTokens[3];
 			
-			if(headerTokens[1] == "2.0")
+			if(headerTokens[1].equals("2.0"))
 				Peer.getDeletedFiles().add(fileID);
 			
 			ArrayList<Integer> chunks = DM.getOwnedFileChunks(fileID);
@@ -160,6 +183,7 @@ public class MessageHandler implements Runnable
 			for(int i = 0; i < chunks.size(); i++)
 				FileManager.deleteChunk(fileID, chunks.get(i));
 			
+			//System.out.println(chunks.size());
 			Peer.getDataManager().deleteChunks(fileID);
 
 			break;
@@ -183,6 +207,9 @@ public class MessageHandler implements Runnable
 			break;
 			
 		case "CHECKDELETED":
+			if(Peer.getProtocolVersion().equals("1.0"))
+				return;
+			
 			String fileIdd = headerTokens[3];
 			ArrayList<String> previousDeletes = Peer.getDeletedFiles();
 			

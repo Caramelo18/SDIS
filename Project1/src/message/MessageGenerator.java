@@ -14,7 +14,7 @@ public class MessageGenerator
 	public static byte[] generatePUTCHUNK(Chunk chunk)
 	{
 		String header = "PUTCHUNK";
-		header += " " + Peer.getProtocolVersion();
+		header += " " + "1.0";
 		header += " " + Peer.getServerId();
 		header += " " + chunk.getFileId();
 		header += " " + chunk.getChunkNo();
@@ -38,7 +38,7 @@ public class MessageGenerator
 	public static byte[] generateSTORED(String fileID, String chunkNo)
 	{
 		String header = "STORED";
-		header += " " + Peer.getProtocolVersion();
+		header += " " + "1.0";
 		header += " " + Peer.getServerId();
 		header += " " + fileID;
 		header += " " + chunkNo;
@@ -61,7 +61,7 @@ public class MessageGenerator
 	public static byte[] generateGETCHUNK(String fileId, Integer chunkNo)
 	{
 		String header = "GETCHUNK";
-		header += " " + Peer.getProtocolVersion();
+		header += " " + "1.0";
 		header += " " + Peer.getServerId();
 		header += " " + fileId;
 		header += " " + chunkNo;
@@ -84,7 +84,7 @@ public class MessageGenerator
 	public static byte[] generateCHUNK(Chunk chunk)
 	{
 		String header = "CHUNK";
-		header += " " + Peer.getProtocolVersion();
+		header += " " + "1.0";
 		header += " " + Peer.getServerId();
 		header += " " + chunk.getFileId();
 		header += " " + chunk.getChunkNo();
@@ -107,7 +107,7 @@ public class MessageGenerator
 	public static byte[] generateDELETE(String fileID)
 	{
 		String header = "DELETE";
-		header += " " + Peer.getProtocolVersion();
+		header += " " + "1.0";
 		header += " " + Peer.getServerId();
 		header += " " + fileID;
 		header += " " + CRLF + CRLF;
@@ -129,7 +129,7 @@ public class MessageGenerator
 	public static byte[] generateREMOVED(String fileId, String chunkNo)
 	{
 		String header = "REMOVED";
-		header += " " + Peer.getProtocolVersion();
+		header += " " + "1.0";
 		header += " " + Peer.getServerId();
 		header += " " + fileId;
 		header += " " + chunkNo;
@@ -168,6 +168,32 @@ public class MessageGenerator
 		
 		return null;
 	}
+	
+	public static byte[] generateGETCHUNK(String fileId, Integer chunkNo, String IPAdress, Integer port)
+	{
+		String header = "GETCHUNK";
+		header += " " + "2.0";
+		header += " " + Peer.getServerId();
+		header += " " + fileId;
+		header += " " + chunkNo;
+		header += " " + IPAdress;
+		header += " " + String.valueOf(port);
+		header += " " + CRLF + CRLF;
+		
+		try
+		{
+			return header.getBytes("ASCII");
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return null;
+		
+		// MC
+	}
+
 	
 	public static byte[] appendBytes(byte[] header, byte[] body)
 	{

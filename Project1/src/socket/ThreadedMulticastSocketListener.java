@@ -9,7 +9,7 @@ import message.MessageHandler;
 
 public class ThreadedMulticastSocketListener implements Runnable
 {
-	private static final int MAX_SIZE = 65000;
+	public static final int MAX_SIZE = 65000;
 	private MulticastSocket socket;
 	
 	private InetAddress address;

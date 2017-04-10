@@ -103,6 +103,21 @@ public class Client
 			}
 			break;
 			
+		case "RESTOREENH":
+			try
+			{
+				rmi.restoreEnhanced(operands.get(0));
+			}
+			catch (NumberFormatException e)
+			{
+				e.printStackTrace();
+			}
+			catch (RemoteException e)
+			{
+				e.printStackTrace();
+			}
+			break;	
+		
 		default:
 			System.out.println("Unknown command");
 			break;

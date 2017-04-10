@@ -223,14 +223,19 @@ public class DataManager implements Serializable
 	
 	public void deleteChunks(String fileID)
 	{
+		ArrayList<StoredData> newList = new ArrayList<StoredData>();
 		for(int i = 0; i < storedFilesData.size(); i++)
 		{
-			if(storedFilesData.get(i).getFileId().equals(fileID))
+			if(!storedFilesData.get(i).getFileId().equals(fileID))
 			{
-				storedFilesData.remove(i);
+				newList.add(storedFilesData.get(i));
+				/*storedFilesData.remove(i);
 				i--;
+				if(i < 0)
+					break;*/
 			}
 		}
+		storedFilesData = newList;
 		serialize();
 	}
 	

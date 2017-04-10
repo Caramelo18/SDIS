@@ -51,12 +51,12 @@ public class BackupChunk implements Runnable
 				
 				if(attempts >= 5)
 				{
-					System.out.println("Finished without the desired replication degree");
+					//System.out.println("Finished without the desired replication degree");
 					running = false;
 				}
 				else
 				{
-					System.out.println("Trying again for chunkNo: " + chunk.getChunkNo());
+					//System.out.println("Trying again for chunkNo: " + chunk.getChunkNo());
 					waitingTime = (int)Math.pow(2, attempts);
 				}
 			}
@@ -69,7 +69,7 @@ public class BackupChunk implements Runnable
 			peers = new ArrayList<Integer>();
 		
 		
-		System.out.println("Finished chunk " + chunk.getChunkNo());
+		//System.out.println("Finished chunk " + chunk.getChunkNo());
 		Peer.getDataManager().addChunkPeers(chunk.getFileId(), chunk.getChunkNo(), peers);
 	}
 

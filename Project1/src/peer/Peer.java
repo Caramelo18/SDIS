@@ -26,9 +26,13 @@ import protocol.Backup;
 import protocol.BackupChunk;
 import protocol.Delete;
 import protocol.Reclaim;
+import protocol.ReclaimEnhancement;
 import protocol.Restore;
+import protocol.RestoreEnhancement;
 import received.ChunkRec;
 import received.Stored;
+import socket.PrivateListener;
+import socket.PrivateSenderSocket;
 import socket.SenderSocket;
 import socket.ThreadedMulticastSocketListener;
 
@@ -46,6 +50,7 @@ public class Peer implements RMI
 	private static ThreadedMulticastSocketListener MDB;
 	private static ThreadedMulticastSocketListener MDR;
 	private static SenderSocket SS;
+	private static PrivateSenderSocket PSS;
 	
 	// Data Manager
 	private volatile static DataManager DM;
@@ -61,7 +66,7 @@ public class Peer implements RMI
 		// Temporary Arguments Initialization
 		String[] addresses = {"224.1.1.1", "224.2.2.2", "224.3.3.3"};
 		int[] ports = {5000, 5001, 5002};
-		protocolVersion = "1.0";
+		protocolVersion = "2.0";
 		serverId = 3;
 		serviceAccessPoint = "RMI" + serverId;
 		
@@ -99,7 +104,13 @@ public class Peer implements RMI
 		initRMI();
 		Stored.initStored();
 		ChunkRec.initChunkRec();
-		Peer.checkDeleted();
+		
+		if(Peer.getProtocolVersion().equals("2.0"))
+		{
+			Peer.checkDeleted();
+			Thread t = new Thread(new ReclaimEnhancement());
+			t.start();
+		}
 	}
 	
 	// INITS
@@ -111,6 +122,7 @@ public class Peer implements RMI
 			MC = new ThreadedMulticastSocketListener(InetAddress.getByName(addresses[0]), ports[0]);
 			MDB = new ThreadedMulticastSocketListener(InetAddress.getByName(addresses[1]), ports[1]);
 			MDR = new ThreadedMulticastSocketListener(InetAddress.getByName(addresses[2]), ports[2]);
+			PSS = new PrivateSenderSocket();
 		}
 		catch (UnknownHostException e)
 		{
@@ -244,7 +256,8 @@ public class Peer implements RMI
 	@Override
 	public void restoreEnhanced(String filename) throws RemoteException {
 		// TODO Auto-generated method stub
-		
+		String filenameWithPath = "../Peer" + Peer.getServerId() + "/Files/" + filename;
+		new Thread(new RestoreEnhancement(filenameWithPath)).start();
 	}
 
 	@Override
@@ -329,7 +342,7 @@ public class Peer implements RMI
 				
 	}
 	
-	private void recoverReplicationDegree()
+	public static void recoverReplicationDegree()
 	{
 		ArrayList<StoredData> ownedChunks = Peer.getDataManager().getStoredData();
 		for(int i = 0; i < ownedChunks.size(); i++)
