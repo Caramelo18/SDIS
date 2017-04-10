@@ -71,7 +71,7 @@ public class MessageHandler implements Runnable
 			if(Peer.getDataManager().isInitiatorPeer(headerTokens[3]))
 				return;
 			
-			System.out.println("BODY LEN: " + body.length);
+			//System.out.println("BODY LEN: " + body.length);
 			
 			Random randPut = new Random();
 			int waitTimePut = randPut.nextInt(400);
@@ -89,7 +89,7 @@ public class MessageHandler implements Runnable
 			{
 				byte[] response = MessageGenerator.generateSTORED(headerTokens[3], headerTokens[4]);
 				Peer.getSenderSocket().sendPacket(response, SenderSocket.Destination.MC);
-				System.out.println("SENT STORED");
+				//System.out.println("SENT STORED");
 			}
 			
 			break;
@@ -97,7 +97,7 @@ public class MessageHandler implements Runnable
 		case "STORED":
 			
 			Stored.addMessage(headerTokens[3], Integer.valueOf(headerTokens[4]), Integer.valueOf(headerTokens[2]));
-			System.out.println("RECEIVED STORED");
+			//System.out.println("RECEIVED STORED");
 			
 			break;
 			
@@ -144,9 +144,12 @@ public class MessageHandler implements Runnable
 			break;
 			
 		case "DELETE":
-			System.out.println("DELETE RECEIVED");
+			//System.out.println("DELETE RECEIVED");
 			
 			String fileID = headerTokens[3];
+			
+			if(headerTokens[1] == "2.0")
+				Peer.getDeletedFiles().add(fileID);
 			
 			ArrayList<Integer> chunks = DM.getOwnedFileChunks(fileID);
 			
@@ -158,7 +161,7 @@ public class MessageHandler implements Runnable
 			break;
 			
 		case "REMOVED":
-			System.out.println("REMOVED RECEIVED");
+			//System.out.println("REMOVED RECEIVED");
 			
 			int peerId = Integer.valueOf(headerTokens[2]);
 			String fileId = headerTokens[3];
@@ -173,6 +176,18 @@ public class MessageHandler implements Runnable
 			int desiredReplicationDegree = Peer.getDataManager().getDesiredReplicationDegree(fileId);
 			recoverReplicationDegree(fileId, chunkNo, desiredReplicationDegree);
 
+			break;
+			
+		case "CHECKDELETED":
+			String fileIdd = headerTokens[3];
+			ArrayList<String> previousDeletes = Peer.getDeletedFiles();
+			
+			if(previousDeletes.contains(fileIdd))
+			{
+				byte[] message = MessageGenerator.generateDELETE(fileIdd);
+				Peer.getMC().sendPacket(message);
+			}
+			
 			break;
 		}
 	}

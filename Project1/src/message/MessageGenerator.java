@@ -149,6 +149,26 @@ public class MessageGenerator
 		// MC
 	}
 	
+	public static byte[] generateCHECKDELETED(String fileId)
+	{
+		String header = "CHECKDELETED";
+		header += " " + "2.0";
+		header += " " + Peer.getServerId();
+		header += " " + fileId;
+		header += CRLF + CRLF;
+		
+		try
+		{
+			return header.getBytes("ASCII");
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
 	public static byte[] appendBytes(byte[] header, byte[] body)
 	{
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -166,4 +186,5 @@ public class MessageGenerator
 
 		return outputStream.toByteArray();
 	}
+	
 }

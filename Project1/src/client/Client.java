@@ -79,7 +79,7 @@ public class Client
 		case "RECLAIM":
 			try
 			{
-				rmi.reclaim(Integer.parseInt(operands.get(0)));
+				rmi.reclaim(Long.parseLong(operands.get(0)));
 			}
 			catch (NumberFormatException e)
 			{

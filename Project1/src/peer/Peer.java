@@ -10,9 +10,12 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 
 import data.DataManager;
+import data.StoredData;
 import files.FileManager;
+import message.MessageGenerator;
 import protocol.Backup;
 import protocol.Delete;
 import protocol.Reclaim;
@@ -43,14 +46,19 @@ public class Peer implements RMI
 	// Disk Space
 	private static long diskSpaceBytes = 1 * 1000 * 1000 * 1000; // 1 GB
 	
+	// Delete Enhancement
+	private static ArrayList<String> deletedFiles;
+	
 	public static void main(String[] args)
 	{
 		// Temporary Arguments Initialization
 		String[] addresses = {"224.1.1.1", "224.2.2.2", "224.3.3.3"};
 		int[] ports = {5000, 5001, 5002};
 		protocolVersion = "1.0";
-		serverId = 4;
+		serverId = 3;
 		serviceAccessPoint = "RMI" + serverId;
+		
+		deletedFiles = new ArrayList<String>();
 		
 		initListeners(addresses, ports);
 		SS = new SenderSocket();
@@ -84,6 +92,7 @@ public class Peer implements RMI
 		initRMI();
 		Stored.initStored();
 		ChunkRec.initChunkRec();
+		Peer.checkDeleted();
 	}
 	
 	// INITS
@@ -171,6 +180,11 @@ public class Peer implements RMI
 		return diskSpaceBytes;
 	}
 
+	public static ArrayList<String> getDeletedFiles()
+	{
+		return deletedFiles;
+	}
+	
 	// OTHER METHODS
 	
 	@Override
@@ -198,14 +212,13 @@ public class Peer implements RMI
 	}
 
 	@Override
-	public void reclaim(int kbytes) throws RemoteException
+	public void reclaim(long kbytes) throws RemoteException
 	{
 		diskSpaceBytes = kbytes * 1000;
 		if(FileManager.getChunksSize() > diskSpaceBytes)
 		{
-			// TODO
 			long toReclaim = FileManager.getChunksSize() - diskSpaceBytes;
-			new Thread(new Reclaim(toReclaim, this.getDataManager().getStoredData())).start();
+			new Thread(new Reclaim(toReclaim, getDataManager().getStoredData())).start();
 		}
 	}
 
@@ -214,5 +227,48 @@ public class Peer implements RMI
 	{
 		return DM.toString();
 	}
+
+	@Override
+	public void backupEnhanced(String filename, int replicationDegree) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void restoreEnhanced(String filename) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteEnhanced(String filename) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void reclaimEnhanced(long kbytes) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
 	
+	private static void checkDeleted()
+	{
+		ArrayList<StoredData> storedData = Peer.getDataManager().getStoredData();
+		
+		ArrayList<String> ownedFiles = new ArrayList<String>();
+		
+		for(int i = 0; i < storedData.size(); i++)
+		{
+			StoredData actual = storedData.get(i);
+			if(!ownedFiles.contains(actual.getFileId()))
+				ownedFiles.add(actual.getFileId());
+		}
+		
+		for(int i = 0; i < ownedFiles.size(); i++)
+		{
+			byte[] message = MessageGenerator.generateCHECKDELETED(ownedFiles.get(i));
+			Peer.getMC().sendPacket(message);
+		}
+	}
 }
