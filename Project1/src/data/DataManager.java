@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import files.FileManager;
 import message.MessageGenerator;
@@ -96,6 +97,35 @@ public class DataManager implements Serializable
 		}
 	}
 	
+	public boolean validReplicationDegree(String fileId, int chunkNo)
+	{
+		for(int i = 0; i < storedFilesData.size(); i++)
+		{
+			StoredData SD = storedFilesData.get(i);
+			if(SD.getFileId().equals(fileId) && SD.getChunkNo() == chunkNo)
+			{
+				if(SD.getPeers().size() >= SD.getDesiredReplicationDegree())
+					return true;
+				else
+					return false;
+			}
+		}
+		return false;
+	}
+	
+	public int getDesiredReplicationDegree(String fileId)
+	{
+		for(int i = 0; i < storedFilesData.size(); i++)
+		{
+			StoredData SD = storedFilesData.get(i);
+			if(SD.getFileId().equals(fileId))
+			{
+				return SD.getDesiredReplicationDegree();
+			}
+		}
+		return 0;
+	}
+	
 	// BACKUP
 	
 	/*
@@ -154,6 +184,41 @@ public class DataManager implements Serializable
 		}
 		
 		serialize();
+	}
+	
+	public void removeBackedUpDataPeer(String fileId, int chunkNo, int peerId)
+	{
+		for(int i = 0; i < backedUpData.size(); i++)
+		{
+			BackedUpData actual = backedUpData.get(i);
+			if(actual.getFileId().equals(fileId))
+			{
+				HashMap<Integer, ArrayList<Integer>> chunkPeers = actual.getChunkPeers();
+				ArrayList<Integer> peers = chunkPeers.get(chunkNo);
+				if(peers == null)
+					return;
+				
+				for(int j = 0; j < peers.size(); j++)
+				{
+					if(peers.get(j) == peerId)
+					{
+						peers.remove(j);
+						return;
+					}
+				}
+			}
+		}
+	}
+	
+	public boolean isInitiatorPeer(String fileId)
+	{
+		for(int i = 0; i < backedUpData.size(); i++)
+		{
+			BackedUpData actual = backedUpData.get(i);
+			if(actual.getFileId().equals(fileId))
+				return true;
+		}
+		return false;
 	}
 	
 	public void deleteChunks(String fileID)

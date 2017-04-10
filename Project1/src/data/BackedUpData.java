@@ -9,7 +9,7 @@ public class BackedUpData implements Serializable
 	private String filename;
 	private String fileId;
 	private int desiredReplicationDegree;
-	private HashMap<Integer, ArrayList<Integer>> chunkPeers;
+	private HashMap<Integer, ArrayList<Integer>> chunkPeers; // chunk no - peers list
 	
 	public BackedUpData(String filename, String fileId, int desiredReplicationDegree)
 	{
@@ -32,6 +32,11 @@ public class BackedUpData implements Serializable
 	public int getDesiredReplicationDegree()
 	{
 		return desiredReplicationDegree;
+	}
+	
+	public HashMap<Integer, ArrayList<Integer>> getChunkPeers()
+	{
+		return chunkPeers;
 	}
 	
 	public void setFileId(String newFileId)

@@ -1,5 +1,10 @@
 package message;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,7 +13,9 @@ import java.util.Random;
 import chunk.Chunk;
 import data.DataManager;
 import files.FileManager;
+import files.FileSplitter;
 import peer.Peer;
+import protocol.BackupChunk;
 import received.ChunkRec;
 import received.Stored;
 import socket.SenderSocket;
@@ -60,6 +67,9 @@ public class MessageHandler implements Runnable
 		switch(messageType)
 		{
 		case "PUTCHUNK":
+			
+			if(Peer.getDataManager().isInitiatorPeer(headerTokens[3]))
+				return;
 			
 			System.out.println("BODY LEN: " + body.length);
 			
@@ -124,6 +134,7 @@ public class MessageHandler implements Runnable
 			
 		case "CHUNK":
 			String chunk = headerTokens[3] + "-" + headerTokens[4];
+			
 			if(!receivedChunks.contains(chunk)){
 				receivedChunks.add(chunk);
 				System.out.println("Received chunk " + chunk);
@@ -147,6 +158,20 @@ public class MessageHandler implements Runnable
 			break;
 			
 		case "REMOVED":
+			System.out.println("REMOVED RECEIVED");
+			
+			int peerId = Integer.valueOf(headerTokens[2]);
+			String fileId = headerTokens[3];
+			int chunkNo = Integer.valueOf(headerTokens[4]);
+			
+			Peer.getDataManager().removeStoredChunk(fileId, chunkNo, peerId);
+			Peer.getDataManager().removeBackedUpDataPeer(fileId, chunkNo, peerId);
+			
+			if(Peer.getDataManager().validReplicationDegree(fileId, chunkNo))
+				return;
+			
+			int desiredReplicationDegree = Peer.getDataManager().getDesiredReplicationDegree(fileId);
+			recoverReplicationDegree(fileId, chunkNo, desiredReplicationDegree);
 
 			break;
 		}
@@ -193,4 +218,54 @@ public class MessageHandler implements Runnable
 	     }
 	   return -1;  
 	} 
+	
+	private void recoverReplicationDegree(String fileId, int chunkNo, int replicationDegree)
+	{
+		Random r = new Random();
+		int waitTime1 = r.nextInt(400);
+		
+		try
+		{
+			Thread.sleep(waitTime1);
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+		
+		String chunkName = fileId + "-" + String.valueOf(chunkNo);
+		if(receivedChunks.contains(chunkName))
+		{
+			System.out.println("Received chunk, not sending");
+			return;
+		}
+		
+		String path = "../Peer" + Peer.getServerId() + "/Chunks/" + chunkName;
+		File file = new File(path);
+		
+		if(!file.exists())
+			return;
+		
+		BufferedInputStream bufinst = null;
+		try {
+			bufinst = new BufferedInputStream (new FileInputStream(file));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		byte[] body = new byte[FileSplitter.chunkSize];
+		try {
+			bufinst.read(body);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Chunk chunk = new Chunk(fileId, chunkNo, replicationDegree, body);
+		
+		Thread thread = new Thread(new BackupChunk(chunk));
+		thread.start();
+				
+	}
 }
