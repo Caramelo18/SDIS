@@ -64,11 +64,28 @@ public class Peer implements RMI
 	public static void main(String[] args)
 	{
 		// Temporary Arguments Initialization
-		String[] addresses = {"224.1.1.1", "224.2.2.2", "224.3.3.3"};
+		/*String[] addresses = {"224.1.1.1", "224.2.2.2", "224.3.3.3"};
 		int[] ports = {5000, 5001, 5002};
 		protocolVersion = "2.0";
 		serverId = 3;
-		serviceAccessPoint = "RMI" + serverId;
+		serviceAccessPoint = "RMI" + serverId;*/
+		if(args.length != 9)
+		{
+			System.out.println("Wrong number of arguments.Usage:\n\t  java peer.Peer <protocol version> <server id> <service access point> <MC IP> <MC Port> "
+					+ "<MDB IP> <MDB Port>  <MDR IP> <MDR Port>");
+			return;
+		}
+		//java peer.Peer <protocol version> <server id> <service access point> <MC IP> <MC Port> <MDB IP> <MDB Port>  <MDR IP> <MDR Port>
+		protocolVersion = args[0];
+		if(!protocolVersion.matches("[0-9]\\.[0-9]"))
+		{
+			System.out.println("Protocol version is not valid");
+			return;
+		}
+		serverId = Integer.valueOf(args[1]);
+		serviceAccessPoint = args[2];
+		String[] addresses = {args[3], args[5], args[7]};
+		int[] ports = {Integer.valueOf(args[4]), Integer.valueOf(args[6]), Integer.valueOf(args[8])};
 		
 		deletedFiles = new ArrayList<String>();
 		
