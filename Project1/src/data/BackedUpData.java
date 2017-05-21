@@ -6,6 +6,10 @@ import java.util.HashMap;
 
 public class BackedUpData implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String filename;
 	private String fileId;
 	private int desiredReplicationDegree;

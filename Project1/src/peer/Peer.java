@@ -31,7 +31,6 @@ import protocol.Restore;
 import protocol.RestoreEnhancement;
 import received.ChunkRec;
 import received.Stored;
-import socket.PrivateListener;
 import socket.PrivateSenderSocket;
 import socket.SenderSocket;
 import socket.ThreadedMulticastSocketListener;

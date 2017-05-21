@@ -13,6 +13,10 @@ import received.Stored;
 
 public class DataManager implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private volatile ArrayList<StoredData> storedFilesData;
 	private volatile ArrayList<BackedUpData> backedUpData;
 	

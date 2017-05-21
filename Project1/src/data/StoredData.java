@@ -6,6 +6,10 @@ import java.util.ArrayList;
 
 public class StoredData implements Serializable, Comparable<StoredData>
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String fileId;
 	private int chunkNo;
 	private int desiredReplicationDegree;

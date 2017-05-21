@@ -1,21 +1,12 @@
 package message;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
+import java.net.*;
+import java.util.*;
 
 import chunk.Chunk;
 import data.DataManager;
-import files.FileManager;
-import files.FileSplitter;
+import files.*;
 import peer.Peer;
-import protocol.BackupChunk;
 import socket.PrivateSenderSocket;
 import received.ChunkRec;
 import received.Stored;
@@ -27,7 +18,7 @@ public class MessageHandler implements Runnable
 	private String[] headerTokens;
 	private byte[] body;
 		
-	private static volatile ArrayList<String> receivedChunks = new ArrayList<String>();;
+	private static volatile ArrayList<String> receivedChunks = new ArrayList<String>();
 	
 	public MessageHandler(DatagramPacket packet)
 	{	
