@@ -135,7 +135,7 @@ public class DataManager implements Serializable
 	Retorna 1 - filename existe com o fileId indicado
 	Retorna 2 - filename existe com outro fileId
 	*/
-	public boolean addBackedUpData(String filename, String fileId, int desiredReplicationDegree)
+	public boolean addBackedUpData(String filename, String fileId, int desiredReplicationDegree, boolean encrypted)
 	{
 		boolean modified = false;
 		for(int i = 0; i < backedUpData.size(); i++)
@@ -164,7 +164,7 @@ public class DataManager implements Serializable
 		
 		if(!modified)
 		{
-			BackedUpData data = new BackedUpData(filename, fileId, desiredReplicationDegree);
+			BackedUpData data = new BackedUpData(filename, fileId, desiredReplicationDegree, encrypted);
 			backedUpData.add(data);
 		}
 		
@@ -264,6 +264,18 @@ public class DataManager implements Serializable
 			}
 		}
 		serialize();
+	}
+	
+	public boolean isEncrypted(String filename)
+	{
+		for(int i = 0; i < backedUpData.size(); i++)
+		{
+			BackedUpData BUD = backedUpData.get(i);
+			
+			if(BUD.getFilename().equals(filename))
+				return BUD.isEncrypted();
+		}
+		return false;
 	}
 	
 	// SERIALIZE

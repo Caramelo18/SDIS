@@ -33,6 +33,30 @@ public class MessageGenerator
 		
 		// MDB
 	}
+	
+	public static byte[] generatePUTCHUNKEncrypted(Chunk chunk)
+	{
+		String header = "PUTCHUNK";
+		header += " " + "1.0";
+		header += " " + Peer.getPeerID();
+		header += " " + chunk.getFileId();
+		header += " " + chunk.getChunkNo();
+		header += " " + chunk.getReplicationDegree();
+		header += " " + CRLF + CRLF;
+		
+		try
+		{
+			return appendBytes(header.getBytes("ASCII"), Encryptor.encryptBytesAndBase64Encode(chunk.getBody()));
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return null;
+		
+		// MDB
+	}
 
 	public static byte[] generateSTORED(String fileID, String chunkNo)
 	{

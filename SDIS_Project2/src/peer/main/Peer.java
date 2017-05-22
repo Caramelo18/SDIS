@@ -57,7 +57,7 @@ public class Peer implements RMI
 	public static void main(String[] args)
 	{
 		/* TEMPORARY Variable initialization, in future will be from args */
-		peerID = 5;
+		peerID = 4;
 		serviceAccessPoint = "RMI" + peerID;
 		
 		/* Starts Logical Structures */
@@ -233,13 +233,13 @@ public class Peer implements RMI
 	/* RMI */
 	
 	@Override
-	public void backup(String filename, int replicationDegree) throws RemoteException
+	public void backup(String filename, int replicationDegree, boolean encrypt) throws RemoteException
 	{
 		if(replicationDegree < 1 || replicationDegree > 9)
 			System.out.println("Replication degree must be between 1 and 9");
 		
 		String filenameWithPath = "../Peer" + peerID + "/Files/" + filename;
-		new Thread(new Backup(filenameWithPath, replicationDegree)).start();	
+		new Thread(new Backup(filenameWithPath, replicationDegree, encrypt)).start();	
 	}
 
 	@Override
@@ -345,7 +345,7 @@ public class Peer implements RMI
 		
 		Chunk chunk = new Chunk(fileId, chunkNo, replicationDegree, body);
 		
-		Thread thread = new Thread(new BackupChunk(chunk));
+		Thread thread = new Thread(new BackupChunk(chunk, false));
 		thread.start();
 				
 	}

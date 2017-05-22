@@ -108,7 +108,14 @@ public class RestoreEnhancement implements Runnable
 		System.out.println(fileParts.size());
 		
 		ChunkRec.resetFile(fileId);
-		FileManager.restoreFile(f, fileParts);
+		
+		if(DM.isEncrypted(filename))
+		{
+			FileManager.restoreEncryptedFile(f, fileParts);
+		}
+		else
+		{
+			FileManager.restoreFile(f, fileParts);
+		}
 	}
-
 }

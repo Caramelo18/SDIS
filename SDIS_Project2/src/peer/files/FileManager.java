@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 import peer.data.DataManager;
 import peer.main.*;
+import peer.message.Encryptor;
 import peer.message.Stored;
 
 public class FileManager
@@ -114,6 +115,25 @@ public class FileManager
 			fileParts.forEach( (k, v) -> {
 				try {
 					fos.write(v);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			});
+			fos.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void restoreEncryptedFile(File f, HashMap<Integer, byte[]> fileParts)
+	{
+		try {
+			FileOutputStream fos = new FileOutputStream(f);
+			fileParts.forEach( (k, v) -> {
+				try {
+					fos.write(Encryptor.base64decodeAndDecryptBytes(v));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

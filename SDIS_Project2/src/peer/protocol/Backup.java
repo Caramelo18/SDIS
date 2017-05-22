@@ -12,18 +12,20 @@ public class Backup implements Runnable
 {
 	private FileSplitter FS;
 	private int desiredReplicationDegree;
+	private boolean encrypt;
 	
-	public Backup(String filename, int replicationDegree)
+	public Backup(String filename, int replicationDegree, boolean encrypt)
 	{
 		FS = new FileSplitter(filename, replicationDegree);
 		this.desiredReplicationDegree = replicationDegree;
+		this.encrypt = encrypt;
 	}
 
 	@Override
 	public void run()
 	{
 		DataManager DM = Peer.getDataManager();
-		boolean success = DM.addBackedUpData(FS.getFilename(), FS.getFileID(), desiredReplicationDegree);
+		boolean success = DM.addBackedUpData(FS.getFilename(), FS.getFileID(), desiredReplicationDegree, encrypt);
 		
 		if(!success)
 		{
@@ -36,7 +38,7 @@ public class Backup implements Runnable
 		
 		for(int i = 0; i < chunks.size(); i++)
 		{
-			Thread thread = new Thread(new BackupChunk(chunks.get(i)));
+			Thread thread = new Thread(new BackupChunk(chunks.get(i), encrypt));
 			thread.start();
 		}
 	}

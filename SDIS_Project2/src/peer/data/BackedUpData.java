@@ -14,13 +14,15 @@ public class BackedUpData implements Serializable
 	private String fileId;
 	private int desiredReplicationDegree;
 	private HashMap<Integer, ArrayList<Integer>> chunkPeers; // chunk no - peers list
+	private boolean encrypted;
 	
-	public BackedUpData(String filename, String fileId, int desiredReplicationDegree)
+	public BackedUpData(String filename, String fileId, int desiredReplicationDegree, boolean encrypted)
 	{
 		this.filename = filename;
 		this.fileId = fileId;
 		this.desiredReplicationDegree = desiredReplicationDegree;
 		this.chunkPeers = new HashMap<Integer, ArrayList<Integer>>();
+		this.encrypted = encrypted;
 	}
 	
 	public String getFilename()
@@ -59,11 +61,27 @@ public class BackedUpData implements Serializable
 		this.chunkPeers.put(chunkNo, peers);
 	}
 	
+	public boolean isEncrypted()
+	{
+		return encrypted;
+	}
+	
 	public String toString()
 	{
 		String ret = "Filepath: " + filename + "\n";
 		ret += "File ID: " + fileId + "\n";
 		ret += "Desired Replication Degree " + String.valueOf(desiredReplicationDegree) + "\n";
+		
+		if(encrypted)
+		{
+			ret += "Encrypted";
+		}
+		else
+		{
+			ret += "Not Encrypted";
+		}
+		
+		ret += "\n";
 		
 		for(Integer k : chunkPeers.keySet())
 		{

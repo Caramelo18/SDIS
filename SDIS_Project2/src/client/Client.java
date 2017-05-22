@@ -52,7 +52,14 @@ public class Client
 			
 			try
 			{
-				rmi.backup(operands.get(0), Integer.parseInt(operands.get(1)));
+				if(Integer.parseInt(operands.get(2)) != 0)
+				{
+					rmi.backup(operands.get(0), Integer.parseInt(operands.get(1)), true);
+				}
+				else
+				{
+					rmi.backup(operands.get(0), Integer.parseInt(operands.get(1)), false);
+				}
 			}
 			catch (NumberFormatException e)
 			{
@@ -125,7 +132,7 @@ public class Client
 	
 	public static boolean initArgs(String[] args)
 	{
-		if(args.length < 2 || args.length > 4)
+		if(args.length < 2 || args.length > 5 || args.length == 4)
 		{
 			System.out.println("Invalid usage, wrong number of args");
 			return false;
@@ -144,10 +151,11 @@ public class Client
 			operands.add(args[2]);
 			return true;
 		}
-		else if(args.length == 4 && operation.equals("BACKUP"))
+		else if(args.length == 5 && operation.equals("BACKUP"))
 		{
 			operands.add(args[2]);
 			operands.add(args[3]);
+			operands.add(args[4]);
 			return true;
 		}
 		else

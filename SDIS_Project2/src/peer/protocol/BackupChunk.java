@@ -10,9 +10,10 @@ import peer.network.SenderSocket;
 
 public class BackupChunk implements Runnable
 {
-	Chunk chunk;
+	private Chunk chunk;
+	private boolean encrypt;
 	
-	public BackupChunk(Chunk chunk)
+	public BackupChunk(Chunk chunk, boolean encrypt)
 	{
 		this.chunk = chunk;
 	}
@@ -27,8 +28,16 @@ public class BackupChunk implements Runnable
 		
 		boolean running = true;
 		while(running)
-		{			
-			byte[] message = MessageGenerator.generatePUTCHUNK(chunk);
+		{		
+			byte[] message;
+			if(encrypt)
+			{
+				message = MessageGenerator.generatePUTCHUNKEncrypted(chunk);
+			}
+			else
+			{
+				message = MessageGenerator.generatePUTCHUNK(chunk);
+			}
 			Peer.getSenderSocket().sendPacket(message, SenderSocket.Destination.MDB);
 			
 			try

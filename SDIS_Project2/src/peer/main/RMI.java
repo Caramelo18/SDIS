@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 
 public interface RMI extends Remote
 {
-	public void backup(String filename, int replicationDegree) throws RemoteException;
+	public void backup(String filename, int replicationDegree, boolean encrypt) throws RemoteException;
 
 	public void restore(String filename) throws RemoteException;
 
