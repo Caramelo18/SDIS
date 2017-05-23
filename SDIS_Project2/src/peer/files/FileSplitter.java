@@ -21,16 +21,16 @@ public class FileSplitter
 	
 	private String fileID;
 	
-	public FileSplitter(String filename, int replicationDegree)
+	public FileSplitter(String filename, int replicationDegree, boolean encrypt)
 	{
 		this.chunkList = new ArrayList<Chunk> ();
 		this.filename = filename;
 		this.replicationDegree = replicationDegree;
 		this.read = false;
-		splitFile();
+		splitFile(encrypt);
 	}
 	
-	private void splitFile()
+	private void splitFile(boolean encrypt)
 	{	
 		byte[] buffer = new byte[chunkSize];
 		File file = new File(filename);	

@@ -16,7 +16,7 @@ public class Backup implements Runnable
 	
 	public Backup(String filename, int replicationDegree, boolean encrypt)
 	{
-		FS = new FileSplitter(filename, replicationDegree);
+		FS = new FileSplitter(filename, replicationDegree, encrypt);
 		this.desiredReplicationDegree = replicationDegree;
 		this.encrypt = encrypt;
 	}
@@ -38,7 +38,7 @@ public class Backup implements Runnable
 		
 		for(int i = 0; i < chunks.size(); i++)
 		{
-			Thread thread = new Thread(new BackupChunk(chunks.get(i), encrypt));
+			Thread thread = new Thread(new BackupChunk(chunks.get(i)));
 			thread.start();
 		}
 	}

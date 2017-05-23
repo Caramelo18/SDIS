@@ -33,6 +33,9 @@ public class Encryptor
 	{
 		byte[] decryptedBytes = null;
 		
+		System.out.println("ENCRYPTED RECEIVED :");
+		System.out.println(base64EncodedEncryptedBytes);
+		
 		try
 		{
 			Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");

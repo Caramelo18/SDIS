@@ -57,7 +57,7 @@ public class Peer implements RMI
 	public static void main(String[] args)
 	{
 		/* TEMPORARY Variable initialization, in future will be from args */
-		peerID = 4;
+		peerID = 5;
 		serviceAccessPoint = "RMI" + peerID;
 		
 		/* Starts Logical Structures */
@@ -345,7 +345,7 @@ public class Peer implements RMI
 		
 		Chunk chunk = new Chunk(fileId, chunkNo, replicationDegree, body);
 		
-		Thread thread = new Thread(new BackupChunk(chunk, false));
+		Thread thread = new Thread(new BackupChunk(chunk));
 		thread.start();
 				
 	}
