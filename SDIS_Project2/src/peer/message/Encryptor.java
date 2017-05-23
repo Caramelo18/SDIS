@@ -42,6 +42,7 @@ public class Encryptor
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			System.out.println("Error decrypting");
 			System.exit(-1);
 		}
