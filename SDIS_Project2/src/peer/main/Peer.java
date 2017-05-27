@@ -57,7 +57,7 @@ public class Peer implements RMI
 	public static void main(String[] args)
 	{
 		/* TEMPORARY Variable initialization, in future will be from args */
-		peerID = 5;
+		peerID = 1;
 		serviceAccessPoint = "RMI" + peerID;
 		
 		/* Starts Logical Structures */
@@ -360,4 +360,5 @@ public class Peer implements RMI
 				recoverChunkReplicationDegree(actual.getFileId(), actual.getChunkNo(), actual.getDesiredReplicationDegree());
 		}
 	}
+
 }

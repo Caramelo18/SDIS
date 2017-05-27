@@ -1,10 +1,6 @@
 package peer.files;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 import peer.message.*;
@@ -23,7 +19,7 @@ public class FileSplitter
 	
 	public FileSplitter(String filename, int replicationDegree, boolean encrypt)
 	{
-		this.chunkList = new ArrayList<Chunk> ();
+		this.chunkList = new ArrayList<> ();
 		this.filename = filename;
 		this.replicationDegree = replicationDegree;
 		this.read = false;
@@ -33,7 +29,7 @@ public class FileSplitter
 	private void splitFile(boolean encrypt)
 	{	
 		byte[] buffer = new byte[chunkSize];
-		File file = new File(filename);	
+		File file = new File(filename);
 		
 		if(file.length() > 1000000)// cant have more than one million chunks
 		{
@@ -44,6 +40,26 @@ public class FileSplitter
 		FileIDGenerator fid = new FileIDGenerator(filename);	
 		fileID = fid.getHash();
 		int chunkNo = 0;
+
+		if(encrypt){
+			System.out.println("Encrypting");
+			int length = (int) file.length();
+			byte[] fileBuffer = new byte[length];
+			try {
+				BufferedInputStream bufinst = new BufferedInputStream(new FileInputStream(file));
+				bufinst.read(fileBuffer);
+				byte[] encryptedFile = Encryptor.encryptBytesAndBase64Encode(fileBuffer);
+				String encryptedName = filename + "encrypted" ;
+				file = new File(encryptedName);
+				FileOutputStream fos = new FileOutputStream(file);
+				fos.write(encryptedFile);
+				System.out.println("bufsize" + encryptedFile.length);
+				System.out.println("filesize" + file.length());
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+
+		}
 		
 		
 		try
@@ -66,8 +82,12 @@ public class FileSplitter
 			{
 				byte[] empty = new byte[0];
 				chunkList.add(new Chunk(fileID, chunkNo, replicationDegree, empty));
+				System.out.println("mult64");
 			}
 			bufinst.close();
+
+			if(encrypt)
+				file.delete();
 		}
 		catch (FileNotFoundException e)
 		{

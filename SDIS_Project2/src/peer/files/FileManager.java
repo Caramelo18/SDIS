@@ -25,6 +25,8 @@ public class FileManager
 		createDir(peerFolder);
 		createDir(disk);
 		createDir(storedChunks);
+
+		removeTempFiles();
 	}
 	
 	public static void createDir(File f)
@@ -110,8 +112,14 @@ public class FileManager
 	
 	public static void restoreFile(File f, HashMap<Integer, byte[]> fileParts)
 	{
+		String fileName = f.getName();
+		String[] splitName = fileName.split("\\.");
+		String tempName = splitName[0];
+		tempName = "../Peer" + Peer.getPeerID() + "/Files/" + tempName + ".tmp";
+		File tempFile = new File(tempName);
+
 		try {
-			FileOutputStream fos = new FileOutputStream(f);
+			FileOutputStream fos = new FileOutputStream(tempFile);
 			fileParts.forEach( (k, v) -> {
 				try {
 					fos.write(v);
@@ -125,15 +133,23 @@ public class FileManager
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		tempFile.renameTo(f);
 	}
 	
 	public static void restoreEncryptedFile(File f, HashMap<Integer, byte[]> fileParts)
 	{
+		String fileName = f.getName();
+		String[] splitName = fileName.split("\\.");
+		String tempName = splitName[0];
+		tempName = "../Peer" + Peer.getPeerID() + "/Files/" + tempName + ".tmp";
+		File tempFile = new File(tempName);
+
 		try {
-			FileOutputStream fos = new FileOutputStream(f);
+			FileOutputStream fos = new FileOutputStream(tempFile);
 			fileParts.forEach( (k, v) -> {
 				try {
-					fos.write(Encryptor.base64decodeAndDecryptBytes(v));
+					fos.write(v);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -144,6 +160,27 @@ public class FileManager
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		int tempSize =  (int) tempFile.length();
+		byte[] encBytes = new byte[tempSize];
+		try{
+			BufferedInputStream bufinst = new BufferedInputStream(new FileInputStream(tempFile));
+			bufinst.read(encBytes);
+			System.out.println("\n\n prev size " + tempSize );
+
+			byte[] fileBytes = Encryptor.base64decodeAndDecryptBytes(encBytes);
+			FileOutputStream fos = new FileOutputStream(tempFile);
+			fos.write(fileBytes);
+
+
+			System.out.println("\n\n new size " + fileBytes.length);
+
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+
+
+		tempFile.renameTo(f);
 	}
 	
 	public static byte[] getChunk(String fileId, int chunkNo)
@@ -191,5 +228,16 @@ public class FileManager
 				length += getChunksSize();
 		}
 		return length;
+	}
+
+	public static void removeTempFiles(){
+		String path = "../Peer" + Peer.getPeerID() + "/" + "Files/";
+		File directory = new File(path);
+
+		for (File file : directory.listFiles()) {
+			String name = file.getName();
+			if(name.contains(".tmp"))
+				file.delete();
+		}
 	}
 }
