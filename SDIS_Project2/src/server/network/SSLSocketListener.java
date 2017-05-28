@@ -13,6 +13,7 @@ public class SSLSocketListener implements Runnable
 	private PeerChannel peerChannel;
 	private PrintWriter out;
 	private BufferedReader in;
+	boolean running;
 	
 	public SSLSocketListener(PeerChannel peerChannel)
 	{
@@ -36,7 +37,7 @@ public class SSLSocketListener implements Runnable
 			PeerChannelsStore.removeSocket(peerChannel);
 		}
 		
-		boolean running = true;
+		running = true;
 		
 		while(running)
 		{
@@ -84,6 +85,65 @@ public class SSLSocketListener implements Runnable
 			
 			System.out.println("Received an authentication");
 			peerChannel.setInfo(Integer.parseInt(messageTokens[1]), Integer.parseInt(messageTokens[2]), Integer.parseInt(messageTokens[3]), Integer.parseInt(messageTokens[4]), Integer.parseInt(messageTokens[5]));
+			
+			break;
+			
+		case "StoreMetadata":
+			
+			int IDs = Integer.parseInt(messageTokens[1]);
+			
+			try
+			{
+				byte [] mybytearray  = new byte [100000];
+			    InputStream is = peerChannel.getSSLSocket().getInputStream();
+			    FileOutputStream fos = new FileOutputStream("../Master/Peer" + IDs);
+			    BufferedOutputStream bos = new BufferedOutputStream(fos);
+			    int bytesRead = is.read(mybytearray,0,mybytearray.length);
+			    int current = bytesRead;
+	
+			    do
+			    {
+			         bytesRead = is.read(mybytearray, current, (mybytearray.length-current));
+			         if(bytesRead >= 0)
+			        	 current += bytesRead;
+			    }
+			    while(bytesRead > -1);
+	
+			    bos.write(mybytearray, 0 , current);
+			    bos.flush();
+			    
+			    bos.close();
+			    fos.close();
+			}
+			catch(Exception e)
+			{
+				break;
+			}
+			
+			break;
+			
+		case "GetMetadata":
+			
+			int ID = Integer.parseInt(messageTokens[1]);
+			out.println("Metadata");
+			
+			File myFile = new File("../Master/Peer" + ID);
+	        
+	        try
+	        {
+	        	byte [] mybytearray  = new byte [(int)myFile.length()];
+	        	FileInputStream fis = new FileInputStream(myFile);
+	        	BufferedInputStream bis = new BufferedInputStream(fis);
+	        	bis.read(mybytearray,0,mybytearray.length);
+	        	peerChannel.getSSLSocket().getOutputStream().write(mybytearray,0,mybytearray.length);
+	        	
+	        	bis.close();
+	        	fis.close();
+	        }
+	        catch(Exception e)
+	        {
+	        	break;
+	        }
 			
 			break;
 			

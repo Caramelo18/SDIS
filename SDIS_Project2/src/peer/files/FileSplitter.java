@@ -41,7 +41,8 @@ public class FileSplitter
 		fileID = fid.getHash();
 		int chunkNo = 0;
 
-		if(encrypt){
+		if(encrypt)
+		{
 			System.out.println("Encrypting");
 			int length = (int) file.length();
 			byte[] fileBuffer = new byte[length];
