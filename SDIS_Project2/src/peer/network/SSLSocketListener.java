@@ -11,6 +11,7 @@ public class SSLSocketListener implements Runnable
 	private SSLSocket socket;
 	private PrintWriter out;
 	private BufferedReader in;
+	private boolean running;
 	
 	public SSLSocketListener(SSLSocket socket)
 	{
@@ -32,7 +33,7 @@ public class SSLSocketListener implements Runnable
 			System.out.println("Error creating the SSL Socket Listener");
 		}
 		
-		boolean running = true;
+		running = true;
 		
 		while(running)
 		{
@@ -53,6 +54,8 @@ public class SSLSocketListener implements Runnable
 				handleMessage(message);
 			}
 		}
+		
+		Peer.restartMasterServer();
 	}
 	
 	public void handleMessage(String message)

@@ -2,7 +2,9 @@ package server.network;
 
 import java.io.*;
 import javax.net.ssl.*;
+
 import server.logic.*;
+import server.main.Server;
 
 public class SSLSocketListener implements Runnable
 {
@@ -72,6 +74,27 @@ public class SSLSocketListener implements Runnable
 			
 			System.out.println("Received an authentication");
 			peerChannel.setInfo(Integer.parseInt(messageTokens[1]), Integer.parseInt(messageTokens[2]), Integer.parseInt(messageTokens[3]), Integer.parseInt(messageTokens[4]), Integer.parseInt(messageTokens[5]));
+			
+			break;
+			
+		case "Server":
+			
+			System.out.println("Received a connection from another Master Server");
+			Server.connectToOtherMaster(1);
+			Server.connectToOtherMaster(2);
+			
+			break;
+			
+		case "UPDATE":
+			
+			if(messageTokens[1].equals("DONE"))
+			{
+				break;
+			}
+			else
+			{
+				PeerChannelsStore.addForeignContact(messageTokens[1], Integer.parseInt(messageTokens[2]), Integer.parseInt(messageTokens[3]), Integer.parseInt(messageTokens[4]), Integer.parseInt(messageTokens[5]), Integer.parseInt(messageTokens[6]));
+			}
 			
 			break;
 			

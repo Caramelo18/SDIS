@@ -1,6 +1,7 @@
 package server.main;
 
 import java.io.*;
+import java.net.InetAddress;
 
 import javax.net.ssl.*;
 
@@ -10,12 +11,18 @@ import server.network.*;
 public class Server
 {
 	private static SSLServerSocket serverSocket;
+	private static SSLSocket masterSocketOne;
+	private static SSLSocket masterSocketTwo;
+	private static int port = 5000;
 	
 	public static void main(String[] args)
 	{	
 		PeerChannelsStore.PeerChannelsStoreInit();
-		initSocket(5000);
+		initSocket(port);
 		startSocketServerListener();
+		
+		connectToOtherMaster(1);
+		connectToOtherMaster(2);
 	}
 	
 	public static void initSocket(int port)
@@ -54,4 +61,92 @@ public class Server
 		System.out.println("SSL Socket Server Listener started");
 	}
 
+	public static void connectToOtherMaster(int index)
+	{
+		SSLSocketFactory sf = (SSLSocketFactory) SSLSocketFactory.getDefault();
+		
+		int connectingPort = getNextPort(index);
+		
+		boolean connected = false;
+		
+		try
+		{
+			if(index == 1 && masterSocketOne == null)
+			{
+				masterSocketOne = (SSLSocket) sf.createSocket(InetAddress.getByName("localhost"), connectingPort);
+				connected = true;
+			}
+			else if(masterSocketTwo == null)
+			{
+				masterSocketTwo = (SSLSocket) sf.createSocket(InetAddress.getByName("localhost"), connectingPort);
+				connected = true;
+			}
+		}
+		catch (IOException e)
+		{
+			
+		}
+		
+		if(!connected)
+			return;
+		
+		try
+		{
+			PrintWriter PW = null;
+			
+			if(index == 1 && masterSocketOne != null)
+				PW = new PrintWriter (masterSocketOne.getOutputStream(), true);
+			else if(masterSocketTwo != null)
+				PW = new PrintWriter (masterSocketTwo.getOutputStream(), true);
+				
+			if(PW != null)
+				PW.println("Server");
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private static int getNextPort(int index)
+	{
+		if(port == 5000)
+		{
+			if(index == 1)
+			{
+				return 5001;
+			}
+			else
+			{
+				return 5002;
+			}
+		}
+		
+		if(port == 5001)
+		{
+			if(index == 1)
+			{
+				return 5000;
+			}
+			else
+			{
+				return 5002;
+			}
+		}
+		
+		if(port == 5002)
+		{
+			if(index == 1)
+			{
+				return 5000;
+			}
+			else
+			{
+				return 5001;
+			}
+		}
+		
+		return -1;
+	}
 }
