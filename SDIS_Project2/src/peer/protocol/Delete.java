@@ -10,11 +10,17 @@ import peer.network.SenderSocket.Destination;
 public class Delete implements Runnable
 {
 	private String filename;
+	private boolean deleteOwnFile = true;
 	
 	
 	public Delete(String filename)
 	{
 		this.filename = filename;
+	}
+
+	public Delete(String filename, boolean delete) {
+		this.filename = filename;
+		deleteOwnFile = delete;
 	}
 
 	@Override
@@ -33,8 +39,10 @@ public class Delete implements Runnable
 		File file = new File(filename);
 		try
 		{
-			if(file.delete())
-				System.out.println("DELETED FILE");
+			if(deleteOwnFile) {
+				if (file.delete())
+					System.out.println("DELETED FILE");
+			}
 		}
 		catch(Exception e)
 		{

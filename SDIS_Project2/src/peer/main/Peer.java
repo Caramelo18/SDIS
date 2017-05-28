@@ -407,6 +407,19 @@ public class Peer implements RMI
 			int desiredReplicationDegree = actual.getDesiredReplicationDegree();
 			HashMap<Integer, ArrayList<Integer>> chunkPeers = actual.getChunkPeers();
 
+			int maxNumBytes = chunkPeers.size() * 64000;
+			File f = new File(actual.getFilename());
+			if(f.length() > maxNumBytes){
+				Thread t = new Thread(new Thread(new Delete(actual.getFilename(), false)));
+				t.start();
+				try {
+					t.join();
+				} catch (InterruptedException e){
+					e.printStackTrace();
+				}
+				new Thread(new Backup(actual.getFilename(), desiredReplicationDegree, actual.isEncrypted())).start();
+				continue;
+			}
 
 			chunkPeers.forEach((k, v)-> {
 				if(v.size() < desiredReplicationDegree){
