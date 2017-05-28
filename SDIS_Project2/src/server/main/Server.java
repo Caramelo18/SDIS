@@ -2,6 +2,9 @@ package server.main;
 
 import java.io.*;
 import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
 
 import javax.net.ssl.*;
 
@@ -11,18 +14,15 @@ import server.network.*;
 public class Server
 {
 	private static SSLServerSocket serverSocket;
-	private static SSLSocket masterSocketOne;
-	private static SSLSocket masterSocketTwo;
-	private static int port = 5000;
+	private static ArrayList<Socket> masterServers;
+	private static int port = 5002;
 	
 	public static void main(String[] args)
 	{	
 		PeerChannelsStore.PeerChannelsStoreInit();
 		initSocket(port);
 		startSocketServerListener();
-		
-		connectToOtherMaster(1);
-		connectToOtherMaster(2);
+		initConnectionToMasters();
 	}
 	
 	public static void initSocket(int port)
@@ -60,53 +60,82 @@ public class Server
 				
 		System.out.println("SSL Socket Server Listener started");
 	}
-
-	public static void connectToOtherMaster(int index)
+	
+	public static void initConnectionToMasters()
 	{
-		SSLSocketFactory sf = (SSLSocketFactory) SSLSocketFactory.getDefault();
+		masterServers = new ArrayList<Socket>();
 		
-		int connectingPort = getNextPort(index);
-		
-		boolean connected = false;
-		
-		try
-		{
-			if(index == 1 && masterSocketOne == null)
-			{
-				masterSocketOne = (SSLSocket) sf.createSocket(InetAddress.getByName("localhost"), connectingPort);
-				connected = true;
-			}
-			else if(masterSocketTwo == null)
-			{
-				masterSocketTwo = (SSLSocket) sf.createSocket(InetAddress.getByName("localhost"), connectingPort);
-				connected = true;
-			}
-		}
-		catch (IOException e)
-		{
-			
-		}
-		
-		if(!connected)
-			return;
+		boolean connected = true;
+		Socket socket = null;
 		
 		try
 		{
-			PrintWriter PW = null;
+			socket = new Socket(InetAddress.getByName("localhost"), getNextPort(1) + 100);
+		}
+		catch(Exception e)
+		{
+			connected = false;
+		}
+		
+		if(connected && socket != null)
+		{
+			masterServers.add(socket);
+			System.out.println("Connected to a new master");
+		}
+		
+		connected = true;
+		socket = null;
+		
+		try
+		{
+			socket = new Socket(InetAddress.getByName("localhost"), getNextPort(2) + 100);
+		}
+		catch(Exception e)
+		{
+			connected = false;
+		}
+		
+		if(connected && socket != null)
+		{
+			masterServers.add(socket);
+			System.out.println("Connected to a new master");
+		}
+		
+		startSocketServerMasterListener();
+	}
+	
+	public static void startSocketServerMasterListener()
+	{	
+		try
+		{
+			ServerSocket serverSocket = new ServerSocket(port + 100);
 			
-			if(index == 1 && masterSocketOne != null)
-				PW = new PrintWriter (masterSocketOne.getOutputStream(), true);
-			else if(masterSocketTwo != null)
-				PW = new PrintWriter (masterSocketTwo.getOutputStream(), true);
-				
-			if(PW != null)
-				PW.println("Server");
+			MasterSocketListener socketServerListener = new MasterSocketListener(serverSocket);
+			Thread t = new Thread(socketServerListener);
+			t.start();
+					
+			System.out.println("Master Socket Server Listener started");
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			System.out.println("Error opening Server Socket for Masters");
+			System.exit(-1);
 		}
+	}
+	
+	public static void addMasterSocket(Socket socket)
+	{
+		masterServers.add(socket);
+	}
+	
+	public static void removeMe(MasterSocket masterSocket)
+	{
 		
+	}
+	
+	public static int getPort()
+	{
+		return port;
 	}
 	
 	private static int getNextPort(int index)

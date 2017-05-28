@@ -78,7 +78,7 @@ public class Peer implements RMI
 		authenticate();
 		FileManager.initFileManager();
 		initDataManager();
-		initRMI();
+		// initRMI();
 		Stored.initStored();
 		ChunkRec.initChunkRec();
 		Peer.checkDeleted();
