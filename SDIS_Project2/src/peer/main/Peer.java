@@ -7,6 +7,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 import javax.net.ssl.SSLSocket;
@@ -57,7 +58,7 @@ public class Peer implements RMI
 	public static void main(String[] args)
 	{
 		/* TEMPORARY Variable initialization, in future will be from args */
-		peerID = 3;
+		peerID = 1;
 		serviceAccessPoint = "RMI" + peerID;
 		
 		System.out.println("Peer: " + peerID);
@@ -67,6 +68,8 @@ public class Peer implements RMI
 		
 		/* Starts Every Communications Channel */
 		startConnections();
+
+		recoverBackupReplicationDegree();
 	}
 	
 	/* Init Connections */
@@ -393,6 +396,30 @@ public class Peer implements RMI
 			StoredData actual = ownedChunks.get(i);
 			if(actual.getDesiredReplicationDegree() < actual.getPeers().size())
 				recoverChunkReplicationDegree(actual.getFileId(), actual.getChunkNo(), actual.getDesiredReplicationDegree());
+		}
+	}
+
+	public static void recoverBackupReplicationDegree(){
+		ArrayList<BackedUpData> backedUpData = Peer.getDataManager().getBackedUpData();
+		for(int i = 0; i < backedUpData.size(); i++){
+			BackedUpData actual = backedUpData.get(i);
+
+			int desiredReplicationDegree = actual.getDesiredReplicationDegree();
+			HashMap<Integer, ArrayList<Integer>> chunkPeers = actual.getChunkPeers();
+
+
+			chunkPeers.forEach((k, v)-> {
+				if(v.size() < desiredReplicationDegree){
+					int chunkNo = k;
+					FileSplitter fs = new FileSplitter(actual.getFilename(), desiredReplicationDegree, actual.isEncrypted());
+					ArrayList<Chunk> chunks = fs.getChunkList();
+
+					Thread thread = new Thread(new BackupChunk(chunks.get(chunkNo)));
+					thread.start();
+
+					System.out.println("Recovering rep degree chunk " + chunkNo);
+				}
+			});
 		}
 	}
 

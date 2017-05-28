@@ -28,7 +28,9 @@ public class DataManager implements Serializable
 	{
 		return storedFilesData;
 	}
-	
+
+
+	public ArrayList<BackedUpData> getBackedUpData() { return backedUpData; }
 	// STORED
 	
 	public void addStoredFilesData(String fileId, int chunkNo, int desiredReplicationDegree, int size)
@@ -131,7 +133,7 @@ public class DataManager implements Serializable
 	// BACKUP
 	
 	/*
-	Retorna 0 - filename não existe
+	Retorna 0 - filename nï¿½o existe
 	Retorna 1 - filename existe com o fileId indicado
 	Retorna 2 - filename existe com outro fileId
 	*/
