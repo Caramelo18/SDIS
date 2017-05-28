@@ -16,7 +16,7 @@ public class Server
 {
 	private static SSLServerSocket serverSocket;
 	private static ArrayList<MasterSocket> masterServers;
-	private static int port = 5002;
+	private static int port;
 	
 	public static void main(String[] args)
 	{	
