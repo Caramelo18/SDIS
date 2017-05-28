@@ -53,12 +53,16 @@ public class Peer implements RMI
 	private static long diskSpaceBytes = 1 * 1000 * 1000 * 1000; // 1 GB
 	
 	/* Delete Enhancement */
-	private static ArrayList<String> deletedFiles;
+	private static ArrayList<String> deletedFiles = new ArrayList<>();
 
 	public static void main(String[] args)
 	{
+		if(args.length != 1){
+			System.out.println("Must specify Peer ID");
+			System.exit(1);
+		}
 		/* TEMPORARY Variable initialization, in future will be from args */
-		peerID = 1;
+		peerID = Integer.valueOf(args[0]);
 		serviceAccessPoint = "RMI" + peerID;
 		
 		System.out.println("Peer: " + peerID);

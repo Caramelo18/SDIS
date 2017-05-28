@@ -185,7 +185,7 @@ public class MessageHandler implements Runnable
 	{
 		String fileID = headerTokens[3];
 		
-		if(headerTokens[1].equals("2.0"))
+		//if(headerTokens[1].equals("2.0"))
 			Peer.getDeletedFiles().add(fileID);
 		
 		ArrayList<Integer> chunks = Peer.getDataManager().getOwnedFileChunks(fileID);

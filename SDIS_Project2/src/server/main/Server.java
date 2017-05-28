@@ -22,7 +22,16 @@ public class Server
 	{	
 		File masterFolder = new File("../Master");
 		createDir(masterFolder);
-		
+
+		if(args.length != 1){
+			System.out.println("Must specify server port");
+			System.exit(1);
+		}
+		port = Integer.valueOf(args[0]);
+		if(port > 5002 || port < 5000){
+			System.out.println("Port must be between 5000 and 5002");
+			System.exit(0);
+		}
 		PeerChannelsStore.PeerChannelsStoreInit();
 		initSocket(port);
 		startSocketServerListener();
