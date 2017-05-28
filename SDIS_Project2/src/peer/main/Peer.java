@@ -58,17 +58,14 @@ public class Peer implements RMI
 	public static void main(String[] args)
 	{
 		/* TEMPORARY Variable initialization, in future will be from args */
-		peerID = 1;
+		peerID = 2;
 		serviceAccessPoint = "RMI" + peerID;
 		
 		System.out.println("Peer: " + peerID);
 		
-		/* Starts Logical Structures */
-		initDataManager();
-		
 		/* Starts Every Communications Channel */
 		startConnections();
-
+		
 		recoverBackupReplicationDegree();
 	}
 	
@@ -82,10 +79,10 @@ public class Peer implements RMI
 		initSenderSocket();
 		authenticate();
 		FileManager.initFileManager();
-		initDataManager();
 		initRMI();
 		Stored.initStored();
 		ChunkRec.initChunkRec();
+		initDataManager();
 		Peer.checkDeleted();
 		Thread t = new Thread(new ReclaimEnhancement());
 		t.start();
@@ -234,8 +231,51 @@ public class Peer implements RMI
 			}
 		}
 		else
-		{
-			dataManager = new DataManager();
+		{			
+			socketListener.sendMessage("GetMetadata");
+			
+			try
+			{
+				Thread.sleep(500);
+			}
+			catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+			
+			if(socketListener.metadataCheck() == 1)
+			{
+				boolean done = false;
+				while(!done)
+				{
+					File fserver = new File("../Peer" + peerID + "/metadata.ser");
+					if(fserver.exists())
+					{
+						try
+						{
+							FileInputStream fin = new FileInputStream("../Peer" + peerID + "/metadata.ser");
+							ObjectInputStream ois = new ObjectInputStream(fin);
+							dataManager = (DataManager) ois.readObject();
+							ois.close();
+							fin.close();
+						}
+						catch (IOException e)
+						{
+							e.printStackTrace();
+						}
+						catch (ClassNotFoundException e)
+						{
+							e.printStackTrace();
+						}
+						
+						done = true;
+					}
+				}
+			}
+			else
+			{
+				dataManager = new DataManager();
+			}
 		}
 	}
 	

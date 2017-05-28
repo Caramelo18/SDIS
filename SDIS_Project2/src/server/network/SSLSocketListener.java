@@ -90,27 +90,20 @@ public class SSLSocketListener implements Runnable
 			
 		case "StoreMetadata":
 				
+			System.out.println("Received store metadata");
+			
 			try
 			{
-				byte [] mybytearray  = new byte [100000];
+				byte [] array  = new byte [100000];
 			    InputStream is = peerChannel.getSSLSocket().getInputStream();
-			    FileOutputStream fos = new FileOutputStream("../Master/Peer" + peerChannel.getPeerID());
-			    BufferedOutputStream bos = new BufferedOutputStream(fos);
-			    int bytesRead = is.read(mybytearray,0,mybytearray.length);
-			    int current = bytesRead;
-	
-			    do
-			    {
-			         bytesRead = is.read(mybytearray, current, (mybytearray.length-current));
-			         if(bytesRead >= 0)
-			        	 current += bytesRead;
-			    }
-			    while(bytesRead > -1);
-	
-			    bos.write(mybytearray, 0 , current);
-			    bos.flush();
 			    
-			    bos.close();
+			    int bytesRead = is.read(array);
+			    
+			    System.out.println("Read: " + bytesRead);
+			    
+			    FileOutputStream fos = new FileOutputStream("../Master/Peer" + peerChannel.getPeerID());
+			    fos.write(array, 0, bytesRead);
+
 			    fos.close();
 			}
 			catch(Exception e)
@@ -122,9 +115,17 @@ public class SSLSocketListener implements Runnable
 			
 		case "GetMetadata":
 			
-			out.println("Metadata");
 			
 			File myFile = new File("../Master/Peer" + peerChannel.getPeerID());
+			
+			if(myFile.exists())
+			{
+				out.println("Metadata");
+			}
+			else
+			{
+				out.println("NoMetadata");
+			}
 	        
 	        try
 	        {

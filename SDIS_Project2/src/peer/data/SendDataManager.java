@@ -23,17 +23,21 @@ public class SendDataManager implements Runnable {
                 e.printStackTrace();
             }
 
+            System.out.println("Backuping metadata");
             File f = new File("../Peer" + Peer.getPeerID() + "/metadata.ser");
             if(f.exists())  {
                 try   {
-                    FileInputStream fin = new FileInputStream(f);
-                    byte[] array = new byte[100000];
-                    fin.read(array);
+    	        	byte [] array  = new byte [(int)f.length()];
+    	        	FileInputStream fis = new FileInputStream(f);
+    	        	BufferedInputStream bis = new BufferedInputStream(fis);
+    	        	bis.read(array, 0, array.length);
+    	        	
+    	        	bis.close();
+    	        	fis.close();
 
-                    fin.close();
-
-                    Peer.getSocketListener().sendMessage("StoreMetadata");
+    	        	Peer.getSocketListener().sendMessage("StoreMetadata");
                     Peer.getSocketListener().sendBytes(array);
+                    
                 }   catch (IOException e)   {
                     e.printStackTrace();
                 }

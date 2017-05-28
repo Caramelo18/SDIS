@@ -12,12 +12,14 @@ public class SSLSocketListener implements Runnable
 	private PrintWriter out;
 	private BufferedReader in;
 	private boolean running;
+	private int metadataExists; // 0 empty, 1 exists, 2 doesn't exist
 	
 	public SSLSocketListener(SSLSocket socket)
 	{
 		this.socket = socket;
 		out = null;
 		in = null;
+		metadataExists = 0;
 	}
 
 	@Override
@@ -78,6 +80,37 @@ public class SSLSocketListener implements Runnable
 			}
 			
 			break;
+			
+		case "Metadata":
+			
+			metadataExists = 1;
+			
+			try
+			{
+				byte [] array  = new byte [100000];
+			    InputStream is = socket.getInputStream();
+			    
+			    int bytesRead = is.read(array);
+			    
+			    System.out.println("Read: " + bytesRead);
+			    
+			    FileOutputStream fos = new FileOutputStream("../Peer" + Peer.getPeerID() + "/metadata.ser");
+			    fos.write(array, 0, bytesRead);
+
+			    fos.close();
+			}
+			catch(Exception e)
+			{
+				break;
+			}
+			
+			break;
+			
+		case "NoMetadata":
+		
+			metadataExists = 2;
+		
+			break;
 		
 		default:
 			
@@ -102,5 +135,10 @@ public class SSLSocketListener implements Runnable
 		{
 			System.out.println("Failed to send metadata bytes");
 		}
+	}
+	
+	public int metadataCheck()
+	{
+		return metadataExists;
 	}
 }
