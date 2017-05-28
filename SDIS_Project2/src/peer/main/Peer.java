@@ -89,6 +89,8 @@ public class Peer implements RMI
 		Peer.checkDeleted();
 		Thread t = new Thread(new ReclaimEnhancement());
 		t.start();
+
+		new Thread(new SendDataManager()).start();
 	}
 
 	public static void restartMasterServer()
@@ -205,6 +207,7 @@ public class Peer implements RMI
 			e.printStackTrace();
 		}
 	}
+
 	
 	/* Logical Structures */
 
