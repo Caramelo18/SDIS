@@ -58,7 +58,7 @@ public class Peer implements RMI
 	public static void main(String[] args)
 	{
 		/* TEMPORARY Variable initialization, in future will be from args */
-		peerID = 2;
+		peerID = 1;
 		serviceAccessPoint = "RMI" + peerID;
 		
 		System.out.println("Peer: " + peerID);

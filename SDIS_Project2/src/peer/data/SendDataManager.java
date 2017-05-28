@@ -39,7 +39,7 @@ public class SendDataManager implements Runnable {
                     Peer.getSocketListener().sendBytes(array);
                     
                 }   catch (IOException e)   {
-                    e.printStackTrace();
+                    return;
                 }
             }
 

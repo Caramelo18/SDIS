@@ -93,8 +93,13 @@ public class SSLSocketListener implements Runnable
 			    int bytesRead = is.read(array);
 			    
 			    System.out.println("Read: " + bytesRead);
-			    
-			    FileOutputStream fos = new FileOutputStream("../Peer" + Peer.getPeerID() + "/metadata.ser");
+
+			    File f = new File("../Peer" + Peer.getPeerID() + "/metadata.ser");
+
+			    if(f.exists())
+			    	f.delete();
+
+			    FileOutputStream fos = new FileOutputStream(f);
 			    fos.write(array, 0, bytesRead);
 
 			    fos.close();
