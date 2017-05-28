@@ -1,7 +1,5 @@
 package server.logic;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 
 import javax.net.ssl.SSLSocket;
@@ -11,12 +9,10 @@ import server.network.SSLSocketListener;
 public class PeerChannelsStore
 {
 	private static ArrayList<PeerChannel> peers;
-	private static ArrayList<ForeignContact> contacts;
 	
 	public static void PeerChannelsStoreInit()
 	{
 		peers = new ArrayList<PeerChannel>();
-		contacts = new ArrayList<ForeignContact>();
 	}
 	
 	public static void addSocket(SSLSocket socket)
@@ -29,12 +25,6 @@ public class PeerChannelsStore
 		t.start();
 		
 		printState();
-	}
-	
-	public static void addForeignContact(String address, Integer peerID, Integer MCPort, Integer MDBPort, Integer MDRPort, Integer senderPort)
-	{
-		ForeignContact foreingContact = new ForeignContact(address, peerID, MCPort, MDBPort, MDRPort, senderPort);
-		contacts.add(foreingContact);
 	}
 	
 	public static void removeSocket(PeerChannel peerChannel)

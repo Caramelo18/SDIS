@@ -86,6 +86,23 @@ public class Peer implements RMI
 		t.start();
 	}
 
+	public static void restartMasterServer()
+	{
+		connectToMasterServer();
+		startSocketListener();
+		
+		try
+		{
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+		
+		authenticate();
+	}
+	
 	public static void connectToMasterServer()
 	{
 		System.setProperty("javax.net.ssl.trustStore", "truststore");
@@ -95,14 +112,30 @@ public class Peer implements RMI
 		
 		SSLSocketFactory sf = (SSLSocketFactory) SSLSocketFactory.getDefault(); 
 		
-		try
+		int portToConnect = 5000 + (peerID % 3);
+		boolean connected = false;
+		while(!connected)
 		{
-			socket = (SSLSocket) sf.createSocket(InetAddress.getByName("localhost"), 5000);
-		}
-		catch (IOException e)
-		{
-			System.out.println("Cannot connect to master server");
-			System.exit(-1);
+			connected = true;
+			
+			try
+			{
+				socket = (SSLSocket) sf.createSocket(InetAddress.getByName("localhost"), portToConnect);
+			}
+			catch (IOException e)
+			{
+				connected = false;
+				portToConnect++;
+				
+				if(portToConnect == 5003)
+					portToConnect = 5000;
+				
+				if(portToConnect == 5000 + (peerID % 3))
+				{
+					System.out.println("Can't connect to master server");
+					System.exit(-1);
+				}
+			}
 		}
 	}
 	

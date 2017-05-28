@@ -55,6 +55,9 @@ public class FileSplitter
 				fos.write(encryptedFile);
 				System.out.println("bufsize" + encryptedFile.length);
 				System.out.println("filesize" + file.length());
+				
+				bufinst.close();
+				fos.close();
 			} catch (Exception e){
 				e.printStackTrace();
 			}

@@ -174,6 +174,8 @@ public class FileManager
 
 
 			System.out.println("\n\n new size " + fileBytes.length);
+			bufinst.close();
+			fos.close();
 
 		} catch (Exception e){
 			e.printStackTrace();
