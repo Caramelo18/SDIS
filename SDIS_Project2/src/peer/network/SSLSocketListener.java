@@ -94,6 +94,13 @@ public class SSLSocketListener implements Runnable
 	
 	public void sendBytes(byte[] message)
 	{
-		
+		try
+		{
+			socket.getOutputStream().write(message, 0, message.length);
+		}
+		catch (IOException e)
+		{
+			System.out.println("Failed to send metadata bytes");
+		}
 	}
 }

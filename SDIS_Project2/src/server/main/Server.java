@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import javax.net.ssl.*;
 
+import peer.main.Peer;
 import server.logic.*;
 import server.network.*;
 
@@ -19,6 +20,9 @@ public class Server
 	
 	public static void main(String[] args)
 	{	
+		File masterFolder = new File("../Master");
+		createDir(masterFolder);
+		
 		PeerChannelsStore.PeerChannelsStoreInit();
 		initSocket(port);
 		startSocketServerListener();
@@ -218,5 +222,29 @@ public class Server
 		}
 		
 		return buffers;
+	}
+	
+	public static void createDir(File f)
+	{
+		// if the directory does not exist, create it
+		if (!f.exists())
+		{
+		    System.out.println("Creating directory: " + f.getName());
+		    boolean result = false;
+
+		    try
+		    {
+		        f.mkdir();
+		        result = true;
+		    } 
+		    catch(SecurityException se)
+		    {
+		        //handle it
+		    }        
+		    if(result)
+		    {    
+		        System.out.println("DIR created");  
+		    }
+		}
 	}
 }
