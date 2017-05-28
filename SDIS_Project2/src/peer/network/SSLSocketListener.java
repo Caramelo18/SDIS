@@ -91,4 +91,9 @@ public class SSLSocketListener implements Runnable
 	{
 		out.println(message);
 	}
+	
+	public void sendBytes(byte[] message)
+	{
+		
+	}
 }

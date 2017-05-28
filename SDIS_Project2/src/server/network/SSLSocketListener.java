@@ -89,14 +89,12 @@ public class SSLSocketListener implements Runnable
 			break;
 			
 		case "StoreMetadata":
-			
-			int IDs = Integer.parseInt(messageTokens[1]);
-			
+				
 			try
 			{
 				byte [] mybytearray  = new byte [100000];
 			    InputStream is = peerChannel.getSSLSocket().getInputStream();
-			    FileOutputStream fos = new FileOutputStream("../Master/Peer" + IDs);
+			    FileOutputStream fos = new FileOutputStream("../Master/Peer" + peerChannel.getPeerID());
 			    BufferedOutputStream bos = new BufferedOutputStream(fos);
 			    int bytesRead = is.read(mybytearray,0,mybytearray.length);
 			    int current = bytesRead;
@@ -124,10 +122,9 @@ public class SSLSocketListener implements Runnable
 			
 		case "GetMetadata":
 			
-			int ID = Integer.parseInt(messageTokens[1]);
 			out.println("Metadata");
 			
-			File myFile = new File("../Master/Peer" + ID);
+			File myFile = new File("../Master/Peer" + peerChannel.getPeerID());
 	        
 	        try
 	        {
