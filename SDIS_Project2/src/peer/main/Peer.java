@@ -57,8 +57,10 @@ public class Peer implements RMI
 	public static void main(String[] args)
 	{
 		/* TEMPORARY Variable initialization, in future will be from args */
-		peerID = 1;
+		peerID = 3;
 		serviceAccessPoint = "RMI" + peerID;
+		
+		System.out.println("Peer: " + peerID);
 		
 		/* Starts Logical Structures */
 		initDataManager();
@@ -78,7 +80,7 @@ public class Peer implements RMI
 		authenticate();
 		FileManager.initFileManager();
 		initDataManager();
-		// initRMI();
+		initRMI();
 		Stored.initStored();
 		ChunkRec.initChunkRec();
 		Peer.checkDeleted();

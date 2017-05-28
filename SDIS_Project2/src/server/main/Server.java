@@ -14,7 +14,7 @@ import server.network.*;
 public class Server
 {
 	private static SSLServerSocket serverSocket;
-	private static ArrayList<Socket> masterServers;
+	private static ArrayList<MasterSocket> masterServers;
 	private static int port = 5002;
 	
 	public static void main(String[] args)
@@ -63,7 +63,7 @@ public class Server
 	
 	public static void initConnectionToMasters()
 	{
-		masterServers = new ArrayList<Socket>();
+		masterServers = new ArrayList<MasterSocket>();
 		
 		boolean connected = true;
 		Socket socket = null;
@@ -79,7 +79,11 @@ public class Server
 		
 		if(connected && socket != null)
 		{
-			masterServers.add(socket);
+			MasterSocket masterSocketListener = new MasterSocket(socket);
+			Thread t = new Thread(masterSocketListener);
+			t.start();
+			
+			masterServers.add(masterSocketListener);
 			System.out.println("Connected to a new master");
 		}
 		
@@ -97,7 +101,11 @@ public class Server
 		
 		if(connected && socket != null)
 		{
-			masterServers.add(socket);
+			MasterSocket masterSocketListener = new MasterSocket(socket);
+			Thread t = new Thread(masterSocketListener);
+			t.start();
+			
+			masterServers.add(masterSocketListener);
 			System.out.println("Connected to a new master");
 		}
 		
@@ -125,12 +133,17 @@ public class Server
 	
 	public static void addMasterSocket(Socket socket)
 	{
-		masterServers.add(socket);
+		MasterSocket masterSocketListener = new MasterSocket(socket);
+		Thread t = new Thread(masterSocketListener);
+		t.start();
+		
+		masterServers.add(masterSocketListener);
 	}
 	
 	public static void removeMe(MasterSocket masterSocket)
 	{
-		
+		masterServers.remove(masterSocket);
+		System.out.println("Removed a Master Socket");
 	}
 	
 	public static int getPort()
@@ -177,5 +190,33 @@ public class Server
 		}
 		
 		return -1;
+	}
+	
+	public static ArrayList<String> getAllBuffers()
+	{
+		ArrayList<String> buffers = new ArrayList<String>();
+		
+		for(MasterSocket masterSocket : masterServers)
+		{
+			masterSocket.sendMessage("GetPeers");
+			
+			try
+			{
+				Thread.sleep(500);
+			}
+			catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+			
+			ArrayList<String> buffer = masterSocket.getBufffer();
+			for(String message : buffer)
+			{
+				buffers.add(message);
+			}
+			masterSocket.resetBuffer();
+		}
+		
+		return buffers;
 	}
 }

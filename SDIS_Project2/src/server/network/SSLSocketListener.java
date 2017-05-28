@@ -1,9 +1,12 @@
 package server.network;
 
 import java.io.*;
+import java.util.ArrayList;
+
 import javax.net.ssl.*;
 
 import server.logic.*;
+import server.main.Server;
 
 public class SSLSocketListener implements Runnable
 {
@@ -65,6 +68,14 @@ public class SSLSocketListener implements Runnable
 		case "GetPeers":
 			
 			System.out.println("Received a request for the peers");
+			
+			ArrayList<String> buffers = Server.getAllBuffers();
+			
+			for(String messageBuff : buffers)
+			{
+				out.println(messageBuff);
+			}
+			
 			out.println(PeerChannelsStore.getPeers());
 			
 			break;
